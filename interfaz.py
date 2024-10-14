@@ -7,8 +7,9 @@ from cartas import guardar_carta
 
 # Configuración básica de Pygame
 pygame.init()
-screen = pygame.display.set_mode((1500, 1000))
+screen = pygame.display.set_mode((1500, 720), pygame.RESIZABLE)
 pygame.display.set_caption('Crear Carta')
+
 
 # Definir colores
 WHITE = (255, 255, 255)
@@ -129,12 +130,12 @@ class ImageButton:
 
 
 # Crear cajas de texto y dropdowns
-nombre_box = InputBox(300, 50, 200, 32)
-descripcion_box = InputBox(300, 100, 200, 32)
-raza_dropdown = DropdownBox(300, 200, 200, 32, razas_oficiales)
-tipo_carta_dropdown = DropdownBox(300, 300, 200, 32, tipos_carta)
-turno_poder_box = InputBox(300, 450, 200, 32, num_only=True)
-bonus_poder_box = InputBox(300, 500, 200, 32, num_only=True)
+nombre_box = InputBox(300, 30, 200, 20)
+descripcion_box = InputBox(300, 60, 200, 20)
+raza_dropdown = DropdownBox(300, 90, 200, 20, razas_oficiales)
+tipo_carta_dropdown = DropdownBox(300, 150, 200, 20, tipos_carta)
+turno_poder_box = InputBox(300, 180, 200, 20, num_only=True)
+bonus_poder_box = InputBox(300, 220, 200, 20, num_only=True)
 
 atributos = [
     "Poder", "Velocidad", "Magia",
@@ -150,13 +151,13 @@ atributos = [
 
 atributos_boxes = {}
 x_offset = 50
-y_offset = 550
+y_offset = 280
 for i, attr in enumerate(atributos):
     x = x_offset + (i % 3) * 350
     y = y_offset + (i // 3) * 50
     atributos_boxes[attr] = InputBox(x + 190, y, 100, 32, num_only=True)
 
-image_button = ImageButton(300, 250, 200, 32)
+image_button = ImageButton(300, 120, 200, 32)
 
 input_boxes = [
     nombre_box, descripcion_box,
@@ -201,14 +202,14 @@ def validar_datos():
 
 def draw_labels(screen):
     labels = [
-        ("Nombre", (100, 50)),
-        ("Descripción", (100, 100)),
-        ("Raza", (100, 200)),
-        ("Imagen", (100, 250)),
-        ("Tipo de Carta", (100, 300)),
-        ("Turno Poder", (100, 450)),
-        ("Bonus Poder", (100, 500)),
-    ] + [(attr, (100 + (i % 3) * 350, 550 + (i // 3) * 50)) for i, attr in enumerate(atributos_boxes.keys())]
+        ("Nombre", (100, 30)),
+        ("Descripción", (100, 60)),
+        ("Raza", (100, 90)),
+        ("Imagen", (100, 120)),
+        ("Tipo de Carta", (100, 150)),
+        ("Turno Poder", (100, 180)),
+        ("Bonus Poder", (100, 220)),
+    ] + [(attr, (100 + (i % 3) * 350, 280 + (i // 3) * 50)) for i, attr in enumerate(atributos_boxes.keys())]
 
     for label, pos in labels:
         text_surface = font.render(label, True, BLACK)
@@ -218,6 +219,7 @@ def draw_labels(screen):
 running = True
 while running:
     screen.fill(WHITE)
+    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
