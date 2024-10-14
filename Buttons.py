@@ -52,12 +52,7 @@ class Button():
 
             return True
         else:
-            return False
-    
-
-
-
-                
+            return False    
     
     def hover(self):
         pointer = pygame.mouse.get_pos()
