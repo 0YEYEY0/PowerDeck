@@ -1,4 +1,5 @@
 import json 
+import os.path
  
 def read():
     # Opening JSON file
@@ -45,3 +46,6 @@ def cardInfo(id):
     #data = dict(info[0]) # values with titles dictionary
     return data
 
+def exists():
+    check = os.path.isfile("./cartas.json")
+    return check

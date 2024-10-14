@@ -22,11 +22,11 @@ timer = pygame.time.Clock()
 fps = 60
 
 # Count number of cards created
-a = res = len([element for element in list(read()) if isinstance(element, dict)])
-print(a)
+#a = res = len([element for element in list(read()) if isinstance(element, dict)])
+#print(a)
 
-print ("All names: " +  str(cardAttribute("nombre")))
-print ("Molly card:" + str(cardInfo("Molly")))
+#print ("All names: " +  str(cardAttribute("nombre")))
+#print ("Molly card:" + str(cardInfo("Molly")))
 
 
 
@@ -57,10 +57,13 @@ while (status):
     screen.fill(screen_color)
     draw_ui()
 
-    if a == 0:
+    if exists() == False:
         text = font.render("NO CARDS CREATED YET!", True, 'white')
-        screen.blit(text, (250, 300))
+        screen.blit(text, (180, 300))
     else:
+        # Count number of cards created
+        a = res = len([element for element in list(read()) if isinstance(element, dict)])
+        # View cards and info
         for cardsNumX in range (a):
             for cardsNumY in range (a):
                 if cardsNumX < int(resolution[0])//int(imageSize[0]):
