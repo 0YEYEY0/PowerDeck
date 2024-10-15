@@ -1,4 +1,5 @@
 import pygame
+import pygame.event
 import pygame.transform
 from fileReader import *
 from Buttons import *
@@ -21,35 +22,48 @@ screen = pygame.display.set_mode(resolution)
 timer = pygame.time.Clock()
 fps = 60
 
-# Count number of cards created
-#a = res = len([element for element in list(read()) if isinstance(element, dict)])
-#print(a)
-
-#print ("All names: " +  str(cardAttribute("nombre")))
-#print ("Molly card:" + str(cardInfo("Molly")))
-
-
-
 # Paints screen once
 pygame.display.flip()
 status = True
-imageSize = (140,140)
-imageLocation = (int(imageSize[0])//2)+10, (int(imageSize[1])//2)+150
 
+# Basic info for cards image and text  
+imageSize = (140,140)
+imageLocation = (int(imageSize[0])//2), (int(imageSize[1])//2)
 font = pygame.font.SysFont(None, 40)
 
 
-#Basic UI for cards album
+# Basic UI for cards album
 def draw_ui():
     pygame.draw.rect(screen,(102, 205, 170, 255), [0,120, 720, 700], 0, 10)
     text = font.render("CARDS ALBUM", True, 'white')
     screen.blit(text, (250, 65))
     pass
-# sorts through all images
+
+# Function to sort through all images
 def imageAlbum(name):
     image = pygame.image.load("./" + str(name) + ".PNG")
     image = pygame.transform.scale(image, imageSize)
     return image
+
+# list to save cards location on the screen
+cards = []
+x, y = 80,220
+
+print("Mains:" + str(getMain()))
+
+# Creates cards location on the screen
+def createCards(cardAmount):
+    global x,y
+    for i in range(cardAmount):
+        if x + int(imageSize[0]) > 900:
+            x = 80
+            y += imageSize[1]
+        if y + int(imageSize[1]) > 720:  
+            break
+            
+        cards.append(pygame.Rect(x, y, int(imageSize[0]), int(imageSize[1])))
+        x += imageSize[0]
+    return cards
 
 # Card Album game loop
 while (status):
@@ -57,55 +71,57 @@ while (status):
     screen.fill(screen_color)
     draw_ui()
 
+    #Verifies if any cards exists
     if exists() == False:
         text = font.render("NO CARDS CREATED YET!", True, 'white')
         screen.blit(text, (180, 300))
     else:
         # Count number of cards created
-        a = res = len([element for element in list(read()) if isinstance(element, dict)])
+        cardsTotal = res = len([element for element in list(read()) if isinstance(element, dict)])
+        cardLocation = createCards(cardsTotal)
+
+        # Filter bitton
+        filterButton = Button(600,65,25,25,screen, False, imageAlbum(cardAttribute("nombre")[0]),"Variants")
+        if filterButton.pressed():
+            cardsTotal = res = len([element for element in list(getMain()) if isinstance(element, dict)])
+            cardLocation = createCards(cardsTotal)
+            
         # View cards and info
-        for cardsNumX in range (a):
-            for cardsNumY in range (a):
-                if cardsNumX < int(resolution[0])//int(imageSize[0]):
-                    x = (cardsNumX*int(imageSize[0]))+int(imageLocation[0])
-                    y = int(imageLocation[1])
-                    if cardsNumY < int(resolution[1])//int(imageSize[1]):
-                        x = int(imageLocation[0]) 
-                        y= (cardsNumY*int(imageSize[1]))+(int(imageLocation[1]))  
-                    else:
-                        cardsNumY = 0
-                else:
-                    cardsNumX = 0
+        for i in range(cardsTotal):
+            cardX = cardLocation[i].x
+            cardY = cardLocation[i].y
+            
+            # Creates cards
+            Cardbutton = Button(cardX,cardY,imageSize[0],imageSize[1],screen, True, imageAlbum(cardAttribute("nombre")[i]), str(cardAttribute("nombre")[i]))
 
-                Cardbutton = Button(x,y,imageSize[0],imageSize[1],screen,imageAlbum(cardAttribute("nombre")[cardsNumX]), str(cardAttribute("nombre")[cardsNumX]))
-
-                if Cardbutton.pressed():
-                    pygame.draw.rect(screen, "white", [15, 15, 690, 690], 0, 10)
-                    pygame.draw.rect(screen, "black", [20, 20, 680, 680], 0, 10)
-                    # Name
-                    text = font.render("Name: " + str(cardAttribute("nombre")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 65))
-                    # Variant
-                    text = font.render("Variant: " + str(cardAttribute("variante")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 100))
-                    # Race
-                    text = font.render("Race: " + str(cardAttribute("raza")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 140))
-                    # Card Type
-                    text = font.render("Card type: " + str(cardAttribute("tipo_carta")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 180))
-                    # Status: Active/Inactive
-                    text = font.render("Game Status: " + str(cardAttribute("activo_en_juego")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 220))
-                    # Pack Status: Active/Inactive
-                    text = font.render("Pack Status: " + str(cardAttribute("activo_en_paquetes")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 260))
-                    # Id
-                    text = font.render("Id: " + str(cardAttribute("id")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 300))
-                    # Date of creation/modification
-                    text = font.render("Date: " + str(cardAttribute("fecha_modificacion")[cardsNumX]), True, 'white')
-                    screen.blit(text, (100, 340))
+            # Show cards-info function
+            if Cardbutton.pressed():
+                pygame.draw.rect(screen, "white", [15, 15, 690, 690], 0, 10)
+                pygame.draw.rect(screen, "black", [20, 20, 680, 680], 0, 10)
+                # Name
+                text = font.render("Name: " + str(cardAttribute("nombre")[i]), True, 'white')
+                screen.blit(text, (100, 65))
+                # Variant
+                text = font.render("Variant: " + str(cardAttribute("variante")[i]), True, 'white')
+                screen.blit(text, (100, 100))
+                # Race
+                text = font.render("Race: " + str(cardAttribute("raza")[i]), True, 'white')
+                screen.blit(text, (100, 140))
+                # Card Type
+                text = font.render("Card type: " + str(cardAttribute("tipo_carta")[i]), True, 'white')
+                screen.blit(text, (100, 180))
+                # Status: Active/Inactive
+                text = font.render("Game Status: " + str(cardAttribute("activo_en_juego")[i]), True, 'white')
+                screen.blit(text, (100, 220))
+                # Pack Status: Active/Inactive
+                text = font.render("Pack Status: " + str(cardAttribute("activo_en_paquetes")[i]), True, 'white')
+                screen.blit(text, (100, 260))
+                # Id
+                text = font.render("Id: " + str(cardAttribute("id")[i]), True, 'white')
+                screen.blit(text, (100, 300))
+                # Date of creation/modification
+                text = font.render("Date: " + str(cardAttribute("fecha_modificacion")[i]), True, 'white')
+                screen.blit(text, (100, 340))
 
 
     for i in pygame.event.get():
@@ -116,8 +132,6 @@ while (status):
         if i.type == pygame.QUIT:
             status = False
 
-
-    
     pygame.display.update()
     
 # deactivates the pygame library
