@@ -19,15 +19,16 @@ def sorting(card):
     return ordered
 
 # Function to create list with all values from one attribute of the album of cards
-def cardAttribute(attribute):
+def cardAttribute(attribute, list):
     # Opening JSON file
+    """
     with open('cartas.json', 'r') as openfile:
     
         # Reading from json file
         json_object = json.load(openfile)
-
+    """
     #Alphabetically sorts the cards
-    sortedCards = sorting(json_object)
+    sortedCards = sorting(list)
 
     #Find all values or text from specific card attribute 
     info = [card[attribute] for card in sortedCards]

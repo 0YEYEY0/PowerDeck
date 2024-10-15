@@ -64,7 +64,7 @@ def createCards(cardAmount):
         cards.append(pygame.Rect(x, y, int(imageSize[0]), int(imageSize[1])))
         x += imageSize[0]
     return cards
-
+Album = [] 
 # Card Album game loop
 while (status):
     timer.tick(fps)
@@ -80,11 +80,14 @@ while (status):
         cardsTotal = res = len([element for element in list(read()) if isinstance(element, dict)])
         cardLocation = createCards(cardsTotal)
 
-        # Filter bitton
-        filterButton = Button(600,65,25,25,screen, False, imageAlbum(cardAttribute("nombre")[0]),"Variants")
+        # Filter button
+        filterButton = Button(600,65,25,25,screen, False, imageAlbum("something"),"Variants")
         if filterButton.pressed():
             cardsTotal = res = len([element for element in list(getMain()) if isinstance(element, dict)])
             cardLocation = createCards(cardsTotal)
+            Album = getMain()
+        else:
+            Album = read()
             
         # View cards and info
         for i in range(cardsTotal):
@@ -92,35 +95,35 @@ while (status):
             cardY = cardLocation[i].y
             
             # Creates cards
-            Cardbutton = Button(cardX,cardY,imageSize[0],imageSize[1],screen, True, imageAlbum(cardAttribute("nombre")[i]), str(cardAttribute("nombre")[i]))
+            Cardbutton = Button(cardX,cardY,imageSize[0],imageSize[1],screen, True, imageAlbum(cardAttribute("nombre", Album)[i]), str(cardAttribute("nombre", Album)[i]))
 
             # Show cards-info function
             if Cardbutton.pressed():
                 pygame.draw.rect(screen, "white", [15, 15, 690, 690], 0, 10)
                 pygame.draw.rect(screen, "black", [20, 20, 680, 680], 0, 10)
                 # Name
-                text = font.render("Name: " + str(cardAttribute("nombre")[i]), True, 'white')
+                text = font.render("Name: " + str(cardAttribute("nombre", Album)[i]), True, 'white')
                 screen.blit(text, (100, 65))
                 # Variant
-                text = font.render("Variant: " + str(cardAttribute("variante")[i]), True, 'white')
+                text = font.render("Variant: " + str(cardAttribute("variante", Album)[i]), True, 'white')
                 screen.blit(text, (100, 100))
                 # Race
-                text = font.render("Race: " + str(cardAttribute("raza")[i]), True, 'white')
+                text = font.render("Race: " + str(cardAttribute("raza", Album)[i]), True, 'white')
                 screen.blit(text, (100, 140))
                 # Card Type
-                text = font.render("Card type: " + str(cardAttribute("tipo_carta")[i]), True, 'white')
+                text = font.render("Card type: " + str(cardAttribute("tipo_carta", Album)[i]), True, 'white')
                 screen.blit(text, (100, 180))
                 # Status: Active/Inactive
-                text = font.render("Game Status: " + str(cardAttribute("activo_en_juego")[i]), True, 'white')
+                text = font.render("Game Status: " + str(cardAttribute("activo_en_juego", Album)[i]), True, 'white')
                 screen.blit(text, (100, 220))
                 # Pack Status: Active/Inactive
-                text = font.render("Pack Status: " + str(cardAttribute("activo_en_paquetes")[i]), True, 'white')
+                text = font.render("Pack Status: " + str(cardAttribute("activo_en_paquetes", Album)[i]), True, 'white')
                 screen.blit(text, (100, 260))
                 # Id
-                text = font.render("Id: " + str(cardAttribute("id")[i]), True, 'white')
+                text = font.render("Id: " + str(cardAttribute("id", Album)[i]), True, 'white')
                 screen.blit(text, (100, 300))
                 # Date of creation/modification
-                text = font.render("Date: " + str(cardAttribute("fecha_modificacion")[i]), True, 'white')
+                text = font.render("Date: " + str(cardAttribute("fecha_modificacion", Album)[i]), True, 'white')
                 screen.blit(text, (100, 340))
 
 
