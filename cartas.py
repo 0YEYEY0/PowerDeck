@@ -100,7 +100,7 @@ def guardar_carta(nombre, descripcion, variante, raza, tipo_carta, turno_poder, 
 
     # Determinar si es variante o principal
     es_principal = not es_variante(nombre, cartas)
-    variante = "Principal" if es_principal else "variante"
+    variante = "Principal" if es_principal else variante
 
     # Verificar si la combinación nombre + variante ya existe
     if carta_duplicada(nombre, variante, cartas):

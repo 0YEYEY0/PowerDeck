@@ -39,11 +39,34 @@ def draw_ui():
     screen.blit(text, (250, 65))
     pass
 
-# Function to sort through all images
+# Cargar datos de cartas desde cartas.json
+with open('cartas.json', 'r') as file:
+    card_data = json.load(file)
+
+# Función para obtener la ruta de la imagen desde los datos de la carta
+def get_image_path(name):
+    for card in card_data:
+        if card['nombre'] == name:
+            return card['imagen']
+    return None
+
+# Función para ordenar todas las imágenes
+
 def imageAlbum(name):
-    image = pygame.image.load("./" + str(name) + ".PNG")
-    image = pygame.transform.scale(image, imageSize)
-    return image
+    if not card_data:
+            text = font.render("Álbum vacío", True, 'white')
+            screen.blit(text, (250, 300))
+            return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si el álbum está vacío
+
+    image_path = get_image_path(name)
+    if image_path:
+        image = pygame.image.load(image_path)
+        image = pygame.transform.scale(image, imageSize)
+        return image
+    else:
+        text = font.render(f"Imagen para {name} no encontrada.", True, 'white')
+        screen.blit(text, (250, 300))
+        return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si la imagen no se encuentra
 
 # list to save cards location on the screen
 cards = []

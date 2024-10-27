@@ -105,7 +105,7 @@ class InputBox:
 
 class ImageButton:
     def __init__(self, x, y, w, h):
-        self.rect = pygame.Rect(x, y, w, h)
+        self.rect = pygame.Rect(300, 185, 230, 40)
         self.color = GRAY
         self.image_path = ''
 
@@ -123,19 +123,21 @@ class ImageButton:
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect, 2)
         text_surface = font.render("Seleccionar Imagen", True, BLACK)
-        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
+        screen.blit(text_surface, (305, 195))
 
     def get_image_path(self):
         return self.image_path
+    #(self.rect.x + 5, self.rect.y + 5)
 
 
 # Crear cajas de texto y dropdowns
-nombre_box = InputBox(300, 30, 200, 20)
-descripcion_box = InputBox(300, 60, 200, 20)
-raza_dropdown = DropdownBox(300, 90, 200, 20, razas_oficiales)
-tipo_carta_dropdown = DropdownBox(300, 150, 200, 20, tipos_carta)
-turno_poder_box = InputBox(300, 180, 200, 20, num_only=True)
-bonus_poder_box = InputBox(300, 220, 200, 20, num_only=True)
+nombre_box = InputBox(300, 30, 200, 30)
+descripcion_box = InputBox(300, 60, 200, 30)
+raza_dropdown = DropdownBox(620, 30, 200, 30, razas_oficiales)
+tipo_carta_dropdown = DropdownBox(1000, 30, 200, 30, tipos_carta)
+turno_poder_box = InputBox(300, 90, 200, 30, num_only=True)
+bonus_poder_box = InputBox(300, 120, 200, 30, num_only=True)
+variante_box = InputBox(300, 150, 200, 30)
 
 atributos = [
     "Poder", "Velocidad", "Magia",
@@ -161,7 +163,7 @@ image_button = ImageButton(300, 120, 200, 32)
 
 input_boxes = [
     nombre_box, descripcion_box,
-    turno_poder_box, bonus_poder_box
+    turno_poder_box, bonus_poder_box, variante_box
 ] + list(atributos_boxes.values())
 
 
@@ -204,11 +206,12 @@ def draw_labels(screen):
     labels = [
         ("Nombre", (100, 30)),
         ("Descripción", (100, 60)),
-        ("Raza", (100, 90)),
-        ("Imagen", (100, 120)),
-        ("Tipo de Carta", (100, 150)),
-        ("Turno Poder", (100, 180)),
-        ("Bonus Poder", (100, 220)),
+        ("Raza", (550, 30)),
+        ("Imagen", (100, 185)),
+        ("Tipo de Carta", (845, 30)),
+        ("Turno Poder", (100, 90)),
+        ("Bonus Poder", (100, 120)),
+        ("Variante", (100, 150)),
     ] + [(attr, (100 + (i % 3) * 350, 280 + (i // 3) * 50)) for i, attr in enumerate(atributos_boxes.keys())]
 
     for label, pos in labels:
@@ -217,9 +220,11 @@ def draw_labels(screen):
 
 
 running = True
+message = ""
+message_time = 0
+
 while running:
     screen.fill(WHITE)
-    
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -245,7 +250,7 @@ while running:
                     resultado = guardar_carta(
                         nombre_box.get_text(),
                         descripcion_box.get_text(),
-                        "Principal",  # "Principal" para la variante
+                        variante_box.get_text(),  # "Principal" para la variante
                         raza_dropdown.get_selected_option(),
                         tipo_carta_dropdown.get_selected_option(),
                         int(turno_poder_box.get_text()),
@@ -254,12 +259,14 @@ while running:
                         image_button.get_image_path()
                     )
 
-                    print("Carta guardada exitosamente:", resultado)
+                    message = "Carta guardada exitosamente"
+                    message_time = pygame.time.get_ticks()
                 except Exception as e:
-                    print("Error al guardar la carta:", str(e))
-
+                    message = f"Error al guardar la carta: {str(e)}"
+                    message_time = pygame.time.get_ticks()
             else:
-                print("Error de validación:", mensaje_error)
+                message = f"Error de validación: {mensaje_error}"
+                message_time = pygame.time.get_ticks()
 
     for box in input_boxes:
         box.draw(screen)
@@ -269,6 +276,13 @@ while running:
     image_button.draw(screen)
 
     draw_labels(screen)
+
+    # Mostrar mensaje si existe y no han pasado 2 segundos
+    if message and pygame.time.get_ticks() - message_time < 2000:
+        text_surface = font.render(message, True, BLUE)
+        screen.blit(text_surface, (screen.get_width() // 2 - text_surface.get_width() // 2, screen.get_height() - 50))
+    else:
+        message = ""
 
     pygame.display.flip()
 
