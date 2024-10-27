@@ -1,6 +1,8 @@
 import json
 import random
 import hashlib
+import Album
+import interfaz
 import tkinter as tk
 from tkinter import messagebox
 
@@ -90,11 +92,11 @@ def abrir_ventana_administrador():
     ventana_admin.geometry("300x150")
 
     # Botón para ver álbum
-    boton_ver_album = tk.Button(ventana_admin, text="Ver Álbum", command=lambda: None)
+    boton_ver_album = tk.Button(ventana_admin, text="Ver Álbum", command= Album.main)
     boton_ver_album.pack(pady=10)
 
     # Botón para crear carta
-    boton_crear_carta = tk.Button(ventana_admin, text="Crear Carta", command=lambda: None)
+    boton_crear_carta = tk.Button(ventana_admin, text="Crear Carta", command= interfaz.main)
     boton_crear_carta.pack(pady=10)
 
 
@@ -105,7 +107,7 @@ def abrir_ventana_jugador(cuenta):
     ventana_jugador.geometry("300x100")
 
     # Botón para ver álbum
-    boton_ver_album = tk.Button(ventana_jugador, text="Ver Álbum", command=lambda: None)
+    boton_ver_album = tk.Button(ventana_jugador, text="Ver Álbum", command= Album.main)
     boton_ver_album.pack(pady=10)
 
     # Mostrar las cartas asignadas al jugador (opcional)
@@ -113,13 +115,17 @@ def abrir_ventana_jugador(cuenta):
 
 
 # Verifica los datos para iniciar sesión
+# Verifica los datos para iniciar sesión
 def procesar_inicio_sesion():
     nombre_usuario = entry_usuario.get()
     contraseña = entry_contraseña.get()
+    correo = entry_correo.get()
+    nombre_persona = entry_nombre.get()
+    pais = entry_pais.get()
 
     # Validación de datos
-    if not validacion_de_datos(nombre_usuario, contraseña, None, None, None):
-        return  # Detener si la validación falla
+    if not validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pais):
+        return
 
     ruta_cuenta = f"{nombre_usuario}_cuenta.json"
     try:
@@ -131,14 +137,23 @@ def procesar_inicio_sesion():
 
     # Cifra la contraseña y la compara con la guardada
     hash_contraseña = hashlib.sha256(contraseña.encode()).hexdigest()
-    if cuenta["contraseña"] == hash_contraseña:
+
+    # Verifica que todos los datos coincidan
+    if (cuenta["contraseña"] == hash_contraseña and
+            cuenta["correo"] == correo and
+            cuenta["nombre_persona"] == nombre_persona and
+            cuenta["pais"] == pais):
+
         messagebox.showinfo("Inicio de Sesión Exitoso", f"¡Bienvenido {nombre_usuario}!")
+
+        ventana.withdraw()
+
         if cuenta["es_administrador"]:
             abrir_ventana_administrador()
         else:
             abrir_ventana_jugador(cuenta)
     else:
-        messagebox.showerror("Error", "Nombre de usuario o contraseña incorrectos.")
+        messagebox.showerror("Error", "Uno o más datos son incorrectos.")
 
 
 # Interfaz
