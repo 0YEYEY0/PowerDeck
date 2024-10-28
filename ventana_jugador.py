@@ -23,6 +23,3 @@ def ventana_jugador(cuenta, ventana):
     boton_cerrar_sesion = tk.Button(ventana_jugador, text="Cerrar Sesion", command=cerrar_sesion)
     boton_cerrar_sesion.pack(pady=10)
 
-    # Mostrar las cartas asignadas al jugador (opcional)
-    messagebox.showinfo("Cartas Asignadas", f"Cartas asignadas:\n\n{cuenta['cartas']}")
-
