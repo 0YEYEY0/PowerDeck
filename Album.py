@@ -104,7 +104,8 @@ while (status):
         cardLocation = createCards(cardsTotal)
 
         # Filter button
-        filterButton = Button(600,65,25,25,screen, False, imageAlbum("something"),"Variants")
+        imagenFiltro = pygame.image.load("Imagenes/something.png")
+        filterButton = Button(600,65,25,25,screen, False, imagenFiltro, "Variants")
         if filterButton.pressed():
             cardsTotal = res = len([element for element in list(getMain()) if isinstance(element, dict)])
             cardLocation = createCards(cardsTotal)
