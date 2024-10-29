@@ -163,7 +163,7 @@ def procesar_inicio_sesion():
         if cuenta["es_administrador"]:
             ventana_administrador.ventana_administrador(ventana)
         else:
-            ventana_jugador.ventana_jugador(cuenta, ventana)
+            ventana_jugador.ventana_jugador(cuenta, ventana, ruta_cuenta)
     else:
         messagebox.showerror("Error", "Uno o más datos son incorrectos.")
 

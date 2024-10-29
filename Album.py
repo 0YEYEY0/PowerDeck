@@ -3,6 +3,7 @@ import pygame.event
 import pygame.transform
 from fileReader import *
 from Buttons import *
+import json
 
 
 def main():
@@ -40,10 +41,11 @@ def main():
         text = font.render("CARDS ALBUM", True, 'white')
         screen.blit(text, (250, 65))
         pass
-              
-    # Cargar datos de cartas desde cartas.json
+
+
+    # Cargar datos de cartas desde 123_cuenta.json
     with open('cartas.json', 'r') as file:
-        card_data = json.load(file)
+            card_data = json.load(file)
     
     # Función para obtener la ruta de la imagen desde los datos de la carta
     def get_image_path(name):
@@ -53,12 +55,11 @@ def main():
         return None
     
     # Función para ordenar todas las imágenes
-    
     def imageAlbum(name):
         if not card_data:
-                text = font.render("Álbum vacío", True, 'white')
-                screen.blit(text, (250, 300))
-                return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si el álbum está vacío
+            text = font.render("Álbum vacío", True, 'white')
+            screen.blit(text, (250, 300))
+            return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si el álbum está vacío
     
         image_path = get_image_path(name)
         if image_path:
@@ -72,7 +73,7 @@ def main():
     
     # list to save cards location on the screen
     cards = []
-    x, y = 80,220
+    x, y = 80, 220
     
         
     # Creates cards location on the screen

@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 # Abre la ventana del jugador
-def ventana_jugador(cuenta, ventana):
+def ventana_jugador(cuenta, ventana, usuario):
 
 
     def cerrar_sesion():

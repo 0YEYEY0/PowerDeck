@@ -38,7 +38,7 @@
             "Valentía": 9
         },
         "poder_total": 156,
-        "imagen": "C:/Users/josec/Downloads/Projects/Prueba/Moze.PNG",
+        "imagen": "Imagenes/Moze.PNG",
         "fecha_creacion": "2024-10-14 02:35:46",
         "fecha_modificacion": "2024-10-14 02:35:46",
         "activo_en_juego": true,
@@ -83,7 +83,7 @@
             "Valentía": 9
         },
         "poder_total": 177,
-        "imagen": "C:/Users/josec/Downloads/Projects/Prueba/Elio.PNG",
+        "imagen": "Imagenes/Elio.PNG",
         "fecha_creacion": "2024-10-14 02:38:16",
         "fecha_modificacion": "2024-10-14 02:38:16",
         "activo_en_juego": true,
@@ -128,7 +128,7 @@
             "Valentía": 9
         },
         "poder_total": 177,
-        "imagen": "C:/Users/josec/Downloads/Projects/Prueba/Joe.PNG",
+        "imagen": "Imagenes/Joe.PNG",
         "fecha_creacion": "2024-10-14 02:38:16",
         "fecha_modificacion": "2024-10-14 02:38:16",
         "activo_en_juego": true,
@@ -173,7 +173,7 @@
             "Valentía": 9
         },
         "poder_total": 177,
-        "imagen": "C:/Users/josec/Downloads/Projects/Prueba/Freya.PNG",
+        "imagen": "Imagenes/Freya.PNG",
         "fecha_creacion": "2024-10-14 02:38:16",
         "fecha_modificacion": "2024-10-14 02:38:16",
         "activo_en_juego": true,
