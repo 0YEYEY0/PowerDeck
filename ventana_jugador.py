@@ -16,7 +16,7 @@ def ventana_jugador(cuenta, ventana, usuario):
     ventana_jugador.geometry("300x100")
 
     # Botón para ver álbum
-    boton_ver_album = tk.Button(ventana_jugador, text="Ver Álbum", command= Album.main)
+    boton_ver_album = tk.Button(ventana_jugador, text="Ver Álbum", command= Album.main(usuario))
     boton_ver_album.pack(pady=10)
 
     # Botón para cerrar sesion

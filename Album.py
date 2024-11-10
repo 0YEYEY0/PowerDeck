@@ -6,7 +6,7 @@ from Buttons import *
 import json
 
 
-def main():
+def main(cuenta="admin"):
     
     pygame.init()
 
@@ -42,10 +42,17 @@ def main():
         screen.blit(text, (250, 65))
         pass
 
-
-    # Cargar datos de cartas desde 123_cuenta.json
-    with open('cartas.json', 'r') as file:
+    if cuenta == "admin":
+        card_file = 'cartas.json'
+    else: 
+        card_file = cuenta
+    
+    with open(card_file, 'r') as file:
+        if card_file == 'cartas.json':
             card_data = json.load(file)
+        else:
+            player_data = json.load(file)
+            card_data = player_data['cartas']
     
     # Función para obtener la ruta de la imagen desde los datos de la carta
     def get_image_path(name):
@@ -70,7 +77,7 @@ def main():
             text = font.render(f"Imagen para {name} no encontrada.", True, 'white')
             screen.blit(text, (250, 300))
             return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si la imagen no se encuentra
-    
+       
     # list to save cards location on the screen
     cards = []
     x, y = 80, 220
@@ -96,8 +103,8 @@ def main():
         screen.fill(screen_color)
         draw_ui()
     
-        #Verifies if any cards exists
-        if exists() == False:
+        #Verifies if any cards exists 
+        if exists('cartas.json') == False:
             text = font.render("NO CARDS CREATED YET!", True, 'white')
             screen.blit(text, (180, 300))
         else:
