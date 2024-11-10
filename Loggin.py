@@ -6,6 +6,7 @@ import ventana_jugador
 import tkinter as tk
 from tkinter import messagebox
 
+cantidadCartas = 10
 
 # Carga las cartas desde un archivo JSON
 def cargar_cartas(ruta_archivo):
@@ -14,7 +15,7 @@ def cargar_cartas(ruta_archivo):
 
 
 # Asigna cartas aleatorias a un jugador
-def asignar_cartas(cartas_disponibles, cantidad=5):
+def asignar_cartas(cartas_disponibles, cantidad):
     if len(cartas_disponibles) < cantidad:
         return cartas_disponibles  # Si hay menos de 20 cartas, asigna todas las disponibles
 
@@ -52,7 +53,7 @@ def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_a
         "cartas": []
     }
     if not es_administrador:
-        cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidad=5)
+        cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidadCartas)
     return cuenta
 
 
