@@ -14,10 +14,28 @@ def cargar_cartas(ruta_archivo):
 
 
 # Asigna cartas aleatorias a un jugador
-def asignar_cartas(cartas_disponibles, cantidad=20):
+def asignar_cartas(cartas_disponibles, cantidad=5):
     if len(cartas_disponibles) < cantidad:
-        return cartas_disponibles  # Si hay menos de 20 cartas, asigna     todas las disponibles
-    return random.sample(cartas_disponibles, cantidad)
+        return cartas_disponibles  # Si hay menos de 20 cartas, asigna todas las disponibles
+
+    # Define las probabilidades según la rareza
+    probabilidades = {
+        "Ultra-Rara": 0.05,
+        "Muy Rara": 0.12,
+        "Rara": 0.18,
+        "Normal": 0.25,
+        "Básica": 0.40
+    }
+
+    # Crear una lista de cartas con probabilidades
+    cartas_con_probabilidades = []
+    for carta in cartas_disponibles:
+        rareza = carta.get("tipo_carta", "basica")  # Asume "basica" si no se especifica la rareza
+        probabilidad = probabilidades.get(rareza, 0.40)  # Asume 40% si la rareza no está en el diccionario
+        cartas_con_probabilidades.extend([carta] * int(probabilidad * 100))
+
+    # Seleccionar cartas aleatorias basadas en las probabilidades
+    return random.sample(cartas_con_probabilidades, cantidad)
 
 
 # Crea una cuenta de usuario
@@ -34,7 +52,7 @@ def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_a
         "cartas": []
     }
     if not es_administrador:
-        cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidad=20)
+        cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidad=5)
     return cuenta
 
 
