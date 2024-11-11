@@ -117,6 +117,7 @@ def procesar_creacion_cuenta():
             messagebox.showerror("Error", "Credenciales de administrador no válidas.")
             return
 
+
     cartas_disponibles = []
 
     # Carga las cartas en cartas_disponibles desde el archivo json

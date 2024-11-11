@@ -9,15 +9,35 @@
     "usuarios_autorizados": [
         {
             "nombre_usuario": "admin1",
-            "contrase\u00f1a": "25f43b1486ad95a1398e3eeb3d83bc4010015fcc9bedb35b432e00298d5021f7"
+            "contrase\u00f1a": "25f43b1486ad95a1398e3eeb3d83bc4010015fcc9bedb35b432e00298d5021f7",
+            "es_usuario_configuracion": true,
+            "es_usuario_reportes": false
         },
         {
             "nombre_usuario": "admin2",
-            "contrase\u00f1a": "1c142b2d01aa34e9a36bde480645a57fd69e14155dacfab5a3f9257b77fdc8d8"
+            "contrase\u00f1a": "1c142b2d01aa34e9a36bde480645a57fd69e14155dacfab5a3f9257b77fdc8d8",
+            "es_usuario_configuracion": true,
+            "es_usuario_reportes": false
         },
         {
             "nombre_usuario": "admin3",
-            "contrase\u00f1a": "4fc2b5673a201ad9b1fc03dcb346e1baad44351daa0503d5534b4dfdcc4332e0"
+            "contrase\u00f1a": "4fc2b5673a201ad9b1fc03dcb346e1baad44351daa0503d5534b4dfdcc4332e0",
+            "es_usuario_configuracion": true,
+            "es_usuario_reportes": false
+        },
+        {
+            "nombre_usuario": "a",
+            "correo": "a",
+            "contrase\u00f1a": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+            "es_usuario_configuracion": false,
+            "es_usuario_reportes": true
+        },
+        {
+            "nombre_usuario": "b",
+            "correo": "b",
+            "contrase\u00f1a": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+            "es_usuario_configuracion": true,
+            "es_usuario_reportes": false
         }
     ]
 }
