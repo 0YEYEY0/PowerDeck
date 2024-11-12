@@ -129,7 +129,7 @@ def procesar_creacion_cuenta():
             return
 
     cuenta = crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_administrador, cartas_disponibles)
-    ruta_guardado = f"{nombre_usuario}_cuenta.json"
+    ruta_guardado = "Jugadores/" + f"{nombre_usuario}_cuenta.json"
     guardar_cuenta(cuenta, ruta_guardado)
     messagebox.showinfo("Cuenta Creada", "Cuenta creada con éxito.")
 
@@ -154,7 +154,7 @@ def procesar_inicio_sesion():
     if not validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pais):
         return
 
-    ruta_cuenta = f"{nombre_usuario}_cuenta.json"
+    ruta_cuenta = "Jugadores/"+f"{nombre_usuario}_cuenta.json"
     try:
         with open(ruta_cuenta, 'r') as archivo:
             cuenta = json.load(archivo)

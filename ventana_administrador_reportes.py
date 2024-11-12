@@ -1,5 +1,5 @@
 import tkinter as tk
-import reportes
+import ventana_Reportes
 # Abre la ventana del administrador
 def ventana_administrador_reportes(ventana):
 
@@ -13,7 +13,7 @@ def ventana_administrador_reportes(ventana):
     ventana_admin.geometry("300x200")
 
     # Botón para ver reportes
-    boton_ver_reportes = tk.Button(ventana_admin, text="Ver reportes", command= reportes.ver)
+    boton_ver_reportes = tk.Button(ventana_admin, text="Ver reportes", command= ventana_Reportes.ver)
     boton_ver_reportes.pack(pady=10)
 
     # Botón para cerrar sesion

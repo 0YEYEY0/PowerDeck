@@ -1,15 +1,13 @@
-import tkinter as tk
-import fileReader
+import os 
 
-# Abre la ventana del administrador
-def ver():
-    # Interfaz
-    ventana_reportes = tk.Tk()
-    ventana_reportes.title("reportes")
-    ventana_reportes.geometry("300x200")
-    
-    # info
-    label_info = tk.Label(ventana_reportes, text="info:")
-    label_info.pack(pady=5)
-    info_data = tk.Label(ventana_reportes, text=str(fileReader.cardAttribute("nombre", fileReader.read())))
-    info_data.pack(pady=5)
+def jugadores_registrados():
+    cuentas_path = r"Jugadores/"
+    numero_registros = 0
+
+    for path in os.listdir(cuentas_path):
+    # revisa si existen archivos en la carpeta
+        if os.path.isfile(os.path.join(cuentas_path, path)):
+            numero_registros += 1
+    return numero_registros
+
+
