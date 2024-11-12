@@ -14,6 +14,14 @@ def read(file_path='cartas.json'):
         
         return json_object
 
+# Reads through all json file
+def lector(path):
+    # Opening JSON file
+    with open(path, 'r') as openfile:
+        # Reading from json file
+        json_object = json.load(openfile)
+        
+        return json_object
 # Alphabetically sorts the cards/file elements by name
 def sorting(card):
     ordered = sorted(card, key=lambda d: d["nombre"])

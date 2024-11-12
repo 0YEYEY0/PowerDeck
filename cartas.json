@@ -186,7 +186,7 @@
         "variante": "Principal",
         "es_principal": true,
         "raza": "Dragón",
-        "tipo_carta": "Básica",
+        "tipo_carta": "Basica",
         "turno_poder": 7,
         "bonus_poder": 5,
         "atributos": {
@@ -231,7 +231,7 @@
         "variante": "variante",
         "es_principal": false,
         "raza": "Dragón",
-        "tipo_carta": "Básica",
+        "tipo_carta": "Basica",
         "turno_poder": 8,
         "bonus_poder": 5,
         "atributos": {
