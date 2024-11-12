@@ -26,7 +26,6 @@ def conectar_al_servidor():
                 # Verificar si ha pasado el tiempo límite de 60 segundos
                 if time.time() - start_time > 5:
                     estado_var.set("Tiempo excedido")
-                    buscando = False
                     return
 
                 data = s.recv(1024).decode()
