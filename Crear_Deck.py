@@ -1,135 +1,164 @@
-import tkinter as tk
-from tkinter import messagebox, Listbox, Entry, Label
 import json
-from collections import Counter
+import tkinter as tk
+from tkinter import messagebox, simpledialog
+import os
 
-# Define las restricciones de tipo de carta como porcentajes
-restricciones_tipo = {
-    "Ultra Rara": 0.1,  # máximo del 10%
-    "Muy Rara": 0.15,   # máximo del 15%
-    "Rara": 0.2,        # máximo del 20%
-    "Normal": 0.6,      # máximo del 60%
-    "Básica": 1.0       # máximo del 100%
-}
+class DeckManagerApp:
+    def __init__(self, user_file):
+        self.user_file = user_file
+        self.load_user_data()
+        self.deck_size = 5  # Tamaño máximo del mazo
+        self.max_decks = 15  # Número máximo de mazos por usuario
 
-class DeckBuilderApp:
-    def __init__(self, root, username):
-        self.root = root
-        self.root.title("Construcción de Mazo")
-        self.username = username
-        self.deck_size = 5
+        # Crear ventana principal
+        self.root = tk.Tk()
+        self.root.title("Deck Manager")
+        self.create_widgets()
+        self.root.mainloop()
 
-        # Cargar cartas del usuario actual y los mazos creados
-        self.cargar_cartas_usuario()
+    def load_user_data(self):
+        # Cargar la data del usuario desde el archivo JSON, si existe
+        if os.path.exists(self.user_file):
+            with open(self.user_file, "r") as f:
+                try:
+                    self.user_data = json.load(f)
+                except json.JSONDecodeError:
+                    messagebox.showerror("Error", "El archivo JSON está vacío o tiene un formato incorrecto.")
+                    self.user_data = {}
+        else:
+            messagebox.showerror("Error", "El archivo de usuario no existe.")
+            self.user_data = {}
 
-        # Campo para ingresar el nombre del mazo
-        self.label_nombre = Label(root, text="Nombre del Mazo:")
-        self.label_nombre.pack()
-        self.entry_nombre = Entry(root)
-        self.entry_nombre.pack()
+        # Cargar las cartas y los mazos
+        self.cards = self.user_data.get("cartas", [])
+        self.decks = self.user_data.get("mazos", [])
 
-        # Listas para mostrar cartas y mazo
-        self.lista_cartas = Listbox(root, selectmode=tk.SINGLE)
-        self.lista_cartas.pack(side=tk.LEFT, padx=10, pady=10)
-        self.mostrar_cartas_disponibles()
+    def save_user_data(self):
+        # Guardar la data actualizada del usuario en el archivo JSON
+        self.user_data["mazos"] = self.decks
+        with open(self.user_file, "w") as f:
+            json.dump(self.user_data, f, indent=4)
 
-        self.lista_mazo = Listbox(root)
-        self.lista_mazo.pack(side=tk.LEFT, padx=10, pady=10)
+    def create_widgets(self):
+        # Crear la interfaz gráfica de usuario
+        self.deck_name_entry = tk.Entry(self.root)
+        self.deck_name_entry.grid(row=0, column=1)
+        tk.Label(self.root, text="Nombre del mazo:").grid(row=0, column=0)
+        
+        self.create_deck_button = tk.Button(self.root, text="Crear Mazo", command=self.create_deck)
+        self.create_deck_button.grid(row=0, column=2)
 
-        # Botones para agregar, remover cartas y guardar el mazo
-        self.boton_agregar = tk.Button(root, text="Agregar al mazo", command=self.agregar_al_mazo)
-        self.boton_agregar.pack(pady=5)
-        self.boton_remover = tk.Button(root, text="Remover del mazo", command=self.remover_del_mazo)
-        self.boton_remover.pack(pady=5)
-        self.boton_guardar = tk.Button(root, text="Guardar Mazo", command=self.guardar_mazo)
-        self.boton_guardar.pack(pady=5)
+        self.show_decks_button = tk.Button(self.root, text="Mostrar Mazos", command=self.show_decks)
+        self.show_decks_button.grid(row=1, column=0, columnspan=3)
+        
+        self.card_listbox = tk.Listbox(self.root, selectmode=tk.SINGLE)
+        self.card_listbox.grid(row=2, column=0, columnspan=2, sticky="ew")
+        self.update_card_listbox()
 
-    def cargar_cartas_usuario(self):
-        # Cargar los datos desde el archivo JSON del usuario
-        with open(f"{self.username}.json", "r", encoding="utf-8") as file:
-            self.data = json.load(file)
-        self.cartas_disponibles = self.data["cartas"]
-        self.mazo = []
+        self.add_card_button = tk.Button(self.root, text="Agregar Carta al Mazo", command=self.add_card_to_deck)
+        self.add_card_button.grid(row=3, column=0, columnspan=2)
 
-    def mostrar_cartas_disponibles(self):
-        self.lista_cartas.delete(0, tk.END)
-        for carta in self.cartas_disponibles:
-            self.lista_cartas.insert(tk.END, f"{carta['nombre']} - {carta['tipo_carta']}")
+        self.delete_deck_button = tk.Button(self.root, text="Eliminar Mazo", command=self.delete_deck)
+        self.delete_deck_button.grid(row=4, column=0, columnspan=2)
 
-    def agregar_al_mazo(self):
-        seleccion = self.lista_cartas.curselection()
-        if not seleccion:
-            messagebox.showwarning("Selección inválida", "Por favor, selecciona una carta para agregar.")
+    def update_card_listbox(self):
+        # Actualizar la lista de cartas
+        self.card_listbox.delete(0, tk.END)
+        for card in self.cards:
+            self.card_listbox.insert(tk.END, f"{card['nombre']} ({card['tipo_carta']})")
+
+    def create_deck(self):
+        # Crear un nuevo mazo
+        if len(self.decks) >= self.max_decks:
+            messagebox.showerror("Error", f"No se pueden crear más de {self.max_decks} mazos.")
             return
         
-        carta_seleccionada = self.cartas_disponibles[seleccion[0]]
-        tipo_carta = carta_seleccionada["tipo_carta"]
-
-        # Validación de tamaño del mazo
-        if len(self.mazo) >= self.deck_size:
-            messagebox.showwarning("Mazo completo", f"El mazo solo puede contener {self.deck_size} cartas.")
+        deck_name = self.deck_name_entry.get().strip()
+        if not deck_name:
+            messagebox.showerror("Error", "Por favor, ingresa un nombre para el mazo.")
             return
 
-        # Validación de restricciones de tipo de carta
-        contador_tipos = Counter(carta["tipo_carta"] for carta in self.mazo)
+        if any(deck["nombre"] == deck_name for deck in self.decks):
+            messagebox.showerror("Error", "Ya existe un mazo con este nombre.")
+            return
+
+        # Agregar el nuevo mazo a la lista de mazos
+        new_deck = {"nombre": deck_name, "cartas": []}
+        self.decks.append(new_deck)
+        self.save_user_data()
+        messagebox.showinfo("Éxito", f"Mazo '{deck_name}' creado exitosamente.")
+
+    def add_card_to_deck(self):
+        # Agregar una carta seleccionada al mazo activo
+        selected_card_index = self.card_listbox.curselection()
+        if not selected_card_index:
+            messagebox.showerror("Error", "Selecciona una carta para agregar al mazo.")
+            return
+        
+        card = self.cards[selected_card_index[0]]
+        deck_name = self.deck_name_entry.get().strip()
+        
+        deck = next((deck for deck in self.decks if deck["nombre"] == deck_name), None)
+        if not deck:
+            messagebox.showerror("Error", "Por favor, selecciona o crea un mazo primero.")
+            return
+
+        # Verificar si la carta ya está en el mazo
+        if any(c["id"] == card["id"] for c in deck["cartas"]):
+            messagebox.showerror("Error", f"La carta '{card['nombre']}' ya está en el mazo.")
+            return
+
+        # Verificar restricciones de cantidad por tipo
+        tipo_carta = card["tipo_carta"]
+        restricciones_tipo = {"Ultra Rara": 0.1, "Muy Rara": 0.15, "Rara": 0.2, "Normal": 0.6, "Basica": 1.0}
         max_tipo = int(self.deck_size * restricciones_tipo.get(tipo_carta, 0))
-
-        if tipo_carta != "Básica" and contador_tipos[tipo_carta] >= max_tipo:
-            messagebox.showwarning("Límite alcanzado", f"El mazo no puede tener más de {max_tipo} cartas de tipo {tipo_carta}.")
-            return
-
-        # Agregar carta al mazo y eliminarla de la lista de cartas disponibles
-        self.mazo.append(carta_seleccionada)
-        self.lista_mazo.insert(tk.END, f"{carta_seleccionada['nombre']} - {tipo_carta}")
-        self.cartas_disponibles.pop(seleccion[0])
-        self.mostrar_cartas_disponibles()
-
-    def remover_del_mazo(self):
-        seleccion = self.lista_mazo.curselection()
-        if not seleccion:
-            messagebox.showwarning("Selección inválida", "Por favor, selecciona una carta para remover.")
-            return
-
-        carta_removida = self.mazo.pop(seleccion[0])
-        self.lista_cartas.insert(tk.END, f"{carta_removida['nombre']} - {carta_removida['tipo_carta']}")
-        self.cartas_disponibles.append(carta_removida)
-        self.lista_mazo.delete(seleccion[0])
-
-    def guardar_mazo(self):
-        nombre_mazo = self.entry_nombre.get().strip()
         
-        if not nombre_mazo:
-            messagebox.showwarning("Nombre requerido", "Por favor, ingresa un nombre para el mazo.")
+        current_count = sum(1 for c in deck["cartas"] if c["tipo_carta"] == tipo_carta)
+        if current_count >= max_tipo:
+            messagebox.showerror("Error", f"El mazo no puede tener más de {max_tipo} cartas de tipo {tipo_carta}.")
             return
 
-        if len(self.mazo) != self.deck_size:
-            messagebox.showwarning("Mazo incompleto", f"El mazo debe contener exactamente {self.deck_size} cartas antes de guardarlo.")
+        if len(deck["cartas"]) >= self.deck_size:
+            messagebox.showerror("Error", "El mazo ha alcanzado el tamaño máximo permitido.")
             return
 
-        # Preparar los datos del mazo para guardar
-        nuevo_mazo = {
-            "nombre": nombre_mazo,
-            "cartas": self.mazo
-        }
+        # Agregar la carta al mazo
+        deck["cartas"].append(card)
+        self.save_user_data()
+        messagebox.showinfo("Éxito", f"Carta '{card['nombre']}' agregada al mazo '{deck_name}'.")
 
-        # Agregar el mazo a la lista de mazos en el archivo JSON
-        if "mazos" not in self.data:
-            self.data["mazos"] = []
+    def show_decks(self):
+        # Mostrar todos los mazos creados por el usuario
+        if not self.decks:
+            messagebox.showinfo("Mazos", "No tienes mazos creados.")
+            return
         
-        self.data["mazos"].append(nuevo_mazo)
+        deck_names = "\n".join(deck["nombre"] for deck in self.decks)
+        selected_deck_name = simpledialog.askstring("Mazos", f"Tus mazos:\n\n{deck_names}\n\nIngresa el nombre de un mazo para ver sus cartas:")
 
-        # Guardar los datos actualizados en el archivo JSON del usuario
-        with open(f"{self.username}.json", "w", encoding="utf-8") as file:
-            json.dump(self.data, file, indent=4, ensure_ascii=False)
+        deck = next((deck for deck in self.decks if deck["nombre"] == selected_deck_name), None)
+        if not deck:
+            messagebox.showerror("Error", "No se encontró el mazo.")
+            return
 
-        messagebox.showinfo("Mazo guardado", f"El mazo '{nombre_mazo}' ha sido guardado exitosamente.")
-        self.entry_nombre.delete(0, tk.END)
-        self.lista_mazo.delete(0, tk.END)
-        self.mazo.clear()
-        self.mostrar_cartas_disponibles()
+        card_names = "\n".join(card["nombre"] for card in deck["cartas"])
+        messagebox.showinfo("Cartas en el mazo", f"Cartas en '{selected_deck_name}':\n\n{card_names}")
 
-# Inicializar la aplicación con un usuario específico
+    def delete_deck(self):
+        # Eliminar un mazo
+        deck_name = simpledialog.askstring("Eliminar Mazo", "Ingresa el nombre del mazo que deseas eliminar:")
+        deck = next((deck for deck in self.decks if deck["nombre"] == deck_name), None)
+        if not deck:
+            messagebox.showerror("Error", "No se encontró el mazo.")
+            return
+
+        self.decks.remove(deck)
+        self.save_user_data()
+        messagebox.showinfo("Éxito", f"Mazo '{deck_name}' eliminado exitosamente.")
+
+
+# Ejecución del programa
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = DeckBuilderApp(root, "123_cuenta")  # Sustituir "nombre_usuario" con el usuario actual
-    root.mainloop()
+    # Archivo de ejemplo para pruebas
+    user_file = "123_cuenta.json"  # Cambia esto al nombre de archivo real según sea necesario
+    DeckManagerApp(user_file)
