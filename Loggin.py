@@ -6,15 +6,13 @@ import ventana_jugador
 import tkinter as tk
 from tkinter import messagebox
 
-cantidadCartas = 10
+cantidadCartas = 7
 
 # Carga las cartas desde un archivo JSON
 def cargar_cartas(ruta_archivo):
     with open(ruta_archivo, 'r') as archivo:
         return json.load(archivo)
 
-
-# Asigna cartas aleatorias a un jugador
 def asignar_cartas(cartas_disponibles, cantidad):
     if len(cartas_disponibles) < cantidad:
         return cartas_disponibles  # Si hay menos de 20 cartas, asigna todas las disponibles
@@ -22,7 +20,7 @@ def asignar_cartas(cartas_disponibles, cantidad):
     # Define las probabilidades según la rareza
     probabilidades = {
         "Ultra-Rara": 0.05,
-        "Muy Rara": 0.12,
+        "Muy-Rara": 0.12,
         "Rara": 0.18,
         "Normal": 0.25,
         "Básica": 0.40
@@ -35,9 +33,19 @@ def asignar_cartas(cartas_disponibles, cantidad):
         probabilidad = probabilidades.get(rareza, 0.40)  # Asume 40% si la rareza no está en el diccionario
         cartas_con_probabilidades.extend([carta] * int(probabilidad * 100))
 
-    # Seleccionar cartas aleatorias basadas en las probabilidades
-    return random.sample(cartas_con_probabilidades, cantidad)
+    # Seleccionar cartas aleatorias basadas en las probabilidades sin repetir nombres a menos que tengan variantes
+    cartas_asignadas = []
+    nombres_asignados = set()
+    while len(cartas_asignadas) < cantidad:
+        carta_seleccionada = random.choice(cartas_con_probabilidades)
+        nombre_carta = carta_seleccionada["nombre"]
+        variante_carta = carta_seleccionada.get("variante", "")
 
+        if (nombre_carta, variante_carta) not in nombres_asignados:
+            cartas_asignadas.append(carta_seleccionada)
+            nombres_asignados.add((nombre_carta, variante_carta))
+
+    return cartas_asignadas
 
 # Crea una cuenta de usuario
 def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_administrador, cartas_disponibles):

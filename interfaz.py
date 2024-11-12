@@ -23,7 +23,7 @@ def main():
     
     # Definir lista de razas pre-cargadas y tipos de carta
     razas_oficiales = ['Humano', 'Elfo', 'Orco', 'Dragón', 'Ángel', 'Demonio']
-    tipos_carta = ['Ultra-Rara', 'Muy Rara', 'Rara', 'Normal', 'Basica']
+    tipos_carta = ['Ultra-Rara', 'Muy-Rara', 'Rara', 'Normal', 'Basica']
     
     
     # Clases de componentes

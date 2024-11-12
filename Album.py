@@ -5,68 +5,65 @@ from fileReader import *
 from Buttons import *
 import json
 
-
 def main(cuenta="admin"):
     
     pygame.init()
 
-
-    # screen info
+    # Configuración de la pantalla
     resolution = (720, 720)
     screen_color = (155, 255, 155)
     
-    # set the pygame window name
+    # Nombre de la ventana de pygame
     pygame.display.set_caption('PowerDeck')
     
-    # create the display surface object
+    # Superficie de la pantalla
     screen = pygame.display.set_mode(resolution)
     
-    # Game setup 
+    # Configuración del juego
     timer = pygame.time.Clock()
     fps = 60
     
-    # Paints screen once
+    # Pintar la pantalla una vez
     pygame.display.flip()
     status = True
     
-    # Basic info for cards image and text  
+    # Información básica para imágenes y texto de cartas
     imageSize = (140,140)
     imageLocation = (int(imageSize[0])//2), (int(imageSize[1])//2)
     font = pygame.font.SysFont(None, 40)
     
-    
-    # Basic UI for cards album
+    # Función para dibujar la interfaz de usuario del álbum
     def draw_ui():
-        pygame.draw.rect(screen,(102, 205, 170, 255), [0,120, 720, 700], 0, 10)
-        text = font.render("CARDS ALBUM", True, 'white')
+        pygame.draw.rect(screen, (102, 205, 170, 255), [0,120, 720, 700], 0, 10)
+        text = font.render("ALBUM DE CARTAS", True, 'white')
         screen.blit(text, (250, 65))
-        pass
 
+    # Determina el archivo de cartas basado en el tipo de cuenta
     if cuenta == "admin":
         card_file = 'cartas.json'
     else: 
         card_file = cuenta
-    
-    with open(card_file, 'r') as file:
+
+    with open(card_file, 'r', encoding="utf-8") as file:
         if card_file == 'cartas.json':
             card_data = json.load(file)
         else:
             player_data = json.load(file)
             card_data = player_data['cartas']
     
-    # Función para obtener la ruta de la imagen desde los datos de la carta
+    # Obtener la ruta de la imagen desde los datos de la carta
     def get_image_path(name):
         for card in card_data:
             if card['nombre'] == name:
                 return card['imagen']
         return None
     
-    # Función para ordenar todas las imágenes
+    # Función para ordenar y obtener la imagen de una carta
     def imageAlbum(name):
         if not card_data:
             text = font.render("Álbum vacío", True, 'white')
             screen.blit(text, (250, 300))
-            return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si el álbum está vacío
+            return pygame.Surface(imageSize)
     
         image_path = get_image_path(name)
         if image_path:
@@ -76,16 +73,15 @@ def main(cuenta="admin"):
         else:
             text = font.render(f"Imagen para {name} no encontrada.", True, 'white')
             screen.blit(text, (250, 300))
-            return pygame.Surface(imageSize)  # Devuelve una superficie en blanco si la imagen no se encuentra
+            return pygame.Surface(imageSize)
        
-    # list to save cards location on the screen
+    # Lista para almacenar las ubicaciones de las cartas en pantalla
     cards = []
-    x, y = 80, 220
     
-        
-    # Creates cards location on the screen
+    # Crear ubicaciones de cartas en la pantalla
     def createCards(cardAmount):
         x, y = 80, 220
+        cards.clear()  # Limpia la lista de ubicaciones de cartas
         for i in range(cardAmount):
             if x + int(imageSize[0]) > 900:
                 x = 80
@@ -96,79 +92,56 @@ def main(cuenta="admin"):
             cards.append(pygame.Rect(x, y, int(imageSize[0]), int(imageSize[1])))
             x += imageSize[0]
         return cards
-    Album = [] 
-    # Card Album game loop
-    while (status):
+
+    Album = []  # Álbum de cartas que se muestra
+    # Bucle principal del juego
+    while status:
         timer.tick(fps)
         screen.fill(screen_color)
         draw_ui()
     
-        #Verifies if any cards exists 
-        if exists('cartas.json') == False:
-            text = font.render("NO CARDS CREATED YET!", True, 'white')
+        # Verifica si el archivo de cartas existe
+        if not exists(card_file):
+            text = font.render("¡NO HAY CARTAS CREADAS AÚN!", True, 'white')
             screen.blit(text, (180, 300))
         else:
-            # Count number of cards created
-            cardsTotal = res = len([element for element in list(read()) if isinstance(element, dict)])
+            # Cuenta el total de cartas y crea las ubicaciones
+            cardsTotal = len([element for element in card_data if isinstance(element, dict)])
             cardLocation = createCards(cardsTotal)
     
-            # Filter button
+            # Botón de filtro
             filterImage = pygame.image.load("Imagenes/something.png")
             filterButton = Button(600,65,25,25,screen, False, filterImage,"Variants")
             if filterButton.pressed():
-                cardsTotal = res = len([element for element in list(getMain()) if isinstance(element, dict)])
+                cardsTotal = len([element for element in list(getMain(card_file)) if isinstance(element, dict)])
                 cardLocation = createCards(cardsTotal)
-                Album = getMain()
+                Album = getMain(card_file)
             else:
-                Album = read()
+                Album = card_data
                 
-            # View cards and info
+            # Muestra cartas y su información
             for i in range(cardsTotal):
                 cardX = cardLocation[i].x
                 cardY = cardLocation[i].y
                 
-                # Creates cards
+                # Crea los botones de cartas
                 Cardbutton = Button(cardX,cardY,imageSize[0],imageSize[1],screen, True, imageAlbum(cardAttribute("nombre", Album)[i]), str(cardAttribute("nombre", Album)[i]))
     
-                # Show cards-info function
+                # Muestra la información de la carta seleccionada
                 if Cardbutton.pressed():
                     pygame.draw.rect(screen, "white", [15, 15, 690, 690], 0, 10)
                     pygame.draw.rect(screen, "black", [20, 20, 680, 680], 0, 10)
-                    # Name
-                    text = font.render("Name: " + str(cardAttribute("nombre", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 65))
-                    # Variant
-                    text = font.render("Variant: " + str(cardAttribute("variante", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 100))
-                    # Race
-                    text = font.render("Race: " + str(cardAttribute("raza", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 140))
-                    # Card Type
-                    text = font.render("Card type: " + str(cardAttribute("tipo_carta", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 180))
-                    # Status: Active/Inactive
-                    text = font.render("Game Status: " + str(cardAttribute("activo_en_juego", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 220))
-                    # Pack Status: Active/Inactive
-                    text = font.render("Pack Status: " + str(cardAttribute("activo_en_paquetes", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 260))
-                    # Id
-                    text = font.render("Id: " + str(cardAttribute("id", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 300))
-                    # Date of creation/modification
-                    text = font.render("Date: " + str(cardAttribute("fecha_modificacion", Album)[i]), True, 'white')
-                    screen.blit(text, (100, 340))
-    
-    
+                    atributos = ["nombre", "variante", "raza", "tipo_carta", "activo_en_juego", "activo_en_paquetes", "id", "fecha_modificacion"]
+                    y_offset = 65
+                    for atributo in atributos:
+                        text = font.render(f"{atributo.capitalize()}: {cardAttribute(atributo, Album)[i]}", True, 'white')
+                        screen.blit(text, (100, y_offset))
+                        y_offset += 40
+
         for i in pygame.event.get():
-     
-            # if event object type is QUIT
-            # then quitting the pygame
-            # and program both.
             if i.type == pygame.QUIT:
                 status = False
     
         pygame.display.update()
         
-    # deactivates the pygame library
     pygame.quit()
