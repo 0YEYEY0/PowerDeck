@@ -11,7 +11,6 @@ def main():
     screen = pygame.display.set_mode((1500, 720), pygame.RESIZABLE)
     pygame.display.set_caption('Crear Carta')
     
-    
     # Definir colores
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -24,7 +23,6 @@ def main():
     # Definir lista de razas pre-cargadas y tipos de carta
     razas_oficiales = ['Humano', 'Elfo', 'Orco', 'Dragón', 'Ángel', 'Demonio']
     tipos_carta = ['Ultra-Rara', 'Muy-Rara', 'Rara', 'Normal', 'Basica']
-    
     
     # Clases de componentes
     class DropdownBox:
@@ -65,7 +63,6 @@ def main():
         def get_selected_option(self):
             return self.selected_option
     
-    
     class InputBox:
         def __init__(self, x, y, w, h, text='', num_only=False):
             self.rect = pygame.Rect(x, y, w, h)
@@ -103,7 +100,6 @@ def main():
         def get_text(self):
             return self.text
     
-    
     class ImageButton:
         def __init__(self, x, y, w, h):
             self.rect = pygame.Rect(300, 185, 230, 40)
@@ -128,8 +124,7 @@ def main():
     
         def get_image_path(self):
             return self.image_path
-        #(self.rect.x + 5, self.rect.y + 5)
-    
+        #(self.rect.x + 5, self.rect.y + 5) 
     
     # Crear cajas de texto y dropdowns
     nombre_box = InputBox(300, 30, 200, 30)
@@ -166,13 +161,11 @@ def main():
         nombre_box, descripcion_box,
         turno_poder_box, bonus_poder_box, variante_box
     ] + list(atributos_boxes.values())
-    
-    
+     
     def generar_id_unico(nombre_carta, nombre_variante):
         return "C-" + ''.join(random.choices(string.ascii_letters + string.digits, k=12)) + \
                "-V-" + ''.join(random.choices(string.ascii_letters + string.digits, k=12))
-    
-    
+      
     def validar_datos():
         for box in atributos_boxes.values():
             try:
@@ -201,8 +194,7 @@ def main():
             return False, "Debe seleccionar una imagen."
     
         return True, ""
-    
-    
+ 
     def draw_labels(screen):
         labels = [
             ("Nombre", (100, 30)),
@@ -217,8 +209,7 @@ def main():
     
         for label, pos in labels:
             text_surface = font.render(label, True, BLACK)
-            screen.blit(text_surface, pos)
-    
+            screen.blit(text_surface, pos) 
     
     running = True
     message = ""

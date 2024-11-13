@@ -1,7 +1,6 @@
 import json
 import random
 import hashlib
-import ventana_administrador
 import ventana_jugador
 import tkinter as tk
 from tkinter import messagebox
@@ -63,12 +62,10 @@ def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, cart
     cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidadCartas)
     return cuenta
 
-
 # Guarda la cuenta en un archivo JSON
 def guardar_cuenta(cuenta, ruta_archivo):
     with open(ruta_archivo, 'w') as archivo:
         json.dump(cuenta, archivo, indent=4)
-
 
 # Valida que se haya ingresado todos los datos
 def validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pais):
@@ -76,10 +73,6 @@ def validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pai
         messagebox.showerror("Error", "Por favor, ingresa todos los datos solicitados.")
         return False
     return True
-
-
-
-
 
 # Verifica si la cuenta ya existe
 def cuenta_existente(nombre_usuario):
@@ -111,7 +104,6 @@ def procesar_creacion_cuenta():
     cartas_disponibles = []
 
     # Carga las cartas en cartas_disponibles desde el archivo json
-    
     try:
         cartas_disponibles = cargar_cartas("cartas.json")
     except FileNotFoundError:
@@ -129,8 +121,6 @@ def procesar_creacion_cuenta():
     entry_correo.delete(0, tk.END)
     entry_nombre.delete(0, tk.END)
     entry_pais.delete(0, tk.END)
-
-
 
 # Verifica los datos para iniciar sesión
 def procesar_inicio_sesion():
@@ -174,7 +164,6 @@ def procesar_inicio_sesion():
     else:
         messagebox.showerror("Error", "Uno o más datos son incorrectos.")
 
-
 # Interfaz
 ventana = tk.Tk()
 ventana.title("Sistema de Cuenta")
@@ -209,17 +198,6 @@ label_pais = tk.Label(ventana, text="País:")
 label_pais.pack(pady=5)
 entry_pais = tk.Entry(ventana)
 entry_pais.pack(pady=5)
-
-# Check jugador-admin
-"""
-var_tipo = tk.StringVar(value="Jugador")
-label_tipo = tk.Label(ventana, text="Tipo de Cuenta:")
-label_tipo.pack(pady=5)
-radio_jugador = tk.Radiobutton(ventana, text="Jugador", variable=var_tipo, value="Jugador")
-radio_administrador = tk.Radiobutton(ventana, text="Administrador", variable=var_tipo, value="Administrador")
-radio_jugador.pack()
-radio_administrador.pack()
-"""
 
 # Botón para crear la cuenta
 boton_crear = tk.Button(ventana, text="Crear Cuenta", command=procesar_creacion_cuenta)
