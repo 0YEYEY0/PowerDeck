@@ -28,18 +28,20 @@ def uso_carta(carta_usada, es_principal=True):
         with open(cuentas, "r") as archivo:
             datos = json.load(archivo)
         
-        for cartas in datos["mazos"]:
-            for usadas in cartas["cartas"]:
-                if True == usadas["es_principal"]:
-                    nom_principal.append(usadas["nombre"])
-                else:
-                    nom_variante.append(usadas["nombre"])
-
+        if "mazos" in datos.keys():
+            for cartas in datos["mazos"]:
+                for usadas in cartas["cartas"]:
+                    if True == usadas["es_principal"]:
+                        nom_principal.append(usadas["nombre"])
+                    else:
+                        nom_variante.append(usadas["nombre"])
+        else:
+            return 0
+        
     if es_principal:
         return nom_principal.count(carta_usada)
     else:
         return nom_variante.count(carta_usada)
-
 
                       
 
