@@ -3,6 +3,7 @@ import fileReader
 import json
 from collections import Counter
 
+#Funcion conseguir total de jugadores registrados
 def jugadores_registrados():
     cuentas_path = r"Jugadores/"
     numero_registros = 0
@@ -13,6 +14,7 @@ def jugadores_registrados():
             numero_registros += 1
     return numero_registros
 
+#Funcion conseguir cuantas veces una carta fuer usadas
 def uso_carta(carta_usada, es_principal=True):
     cuentas_path = r"Jugadores/"
     lista_cuentas = os.listdir(cuentas_path)

@@ -23,10 +23,12 @@ def ver():
     for i in range(total_cartas):
         if (fileReader.cardAttribute("es_principal", fileReader.read())[i]):
             label_usos_cartas = tk.Label(ventana_reportes, 
-                                        text= str(nombre_carta[i]) + ": " + str(reportes.uso_carta(str(nombre_carta[i]), True)))
+                                        text= str(nombre_carta[i]) + ": " + 
+                                        str(reportes.uso_carta(str(nombre_carta[i]), True)))
             label_usos_cartas.pack(side = tk.TOP)
         else:
             label_usos_cartas = tk.Label(ventana_reportes,
-                                        text= str(nombre_carta[i]) + "(variante)" ": " + str(reportes.uso_carta(str(nombre_carta[i]), False)))
+                                        text= str(nombre_carta[i]) + "(variante)" ": " + 
+                                        str(reportes.uso_carta(str(nombre_carta[i]), False)))
             label_usos_cartas.pack(side = tk.TOP)
  

@@ -119,6 +119,7 @@ def main(cuenta="admin"):
                 cardsTotal = res = len([element for element in list(getMain()) if isinstance(element, dict)])
                 cardLocation = createCards(cardsTotal)
                 Album = getMain()
+                print(str(cardAttribute("nombre", Album)))
             else:
                 Album = read()
                 

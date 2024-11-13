@@ -24,7 +24,8 @@ def lector(path):
         return json_object
 # Alphabetically sorts the cards/file elements by name
 def sorting(card):
-    ordered = sorted(card, key=lambda d: d["nombre"])
+    ordered = sorted(card, key=lambda d: d["nombre"].lower())
+
     return ordered
 
 # Function to create list with all values from one attribute of the album of cards
@@ -35,6 +36,7 @@ def cardAttribute(attribute, list):
     # Find all values or text from specific card attribute 
     info = [card[attribute] for card in sortedCards]
     return info
+
 
 # Function to find a specific card's info based on its name
 def cardInfo(id, file_path='cartas.json'):
