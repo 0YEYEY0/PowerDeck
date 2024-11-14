@@ -44,6 +44,10 @@ def asignar_cartas(cartas_disponibles, cantidad):
             cartas_asignadas.append(carta_seleccionada)
             nombres_asignados.add((nombre_carta, variante_carta))
 
+    # Mostrar mensaje con las cartas asignadas
+    nombres_cartas_asignadas = [carta["nombre"] for carta in cartas_asignadas]
+    messagebox.showinfo("Cartas Asignadas", f"Se te han asignado las siguientes cartas: {', '.join(nombres_cartas_asignadas)}")
+
     return cartas_asignadas
 
 # Crea una cuenta de usuario
