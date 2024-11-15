@@ -2,21 +2,21 @@ import json
 import os.path
 
 # Lee todo el contenido del archivo JSON
-def read(filename='cartas.json'):
+def read(filename='Cartas/cartas.json'):
     # Abre el archivo JSON
     with open(filename, 'r') as openfile:
         # Lee el contenido del archivo JSON
         json_object = json.load(openfile)
 
         # Verifica si el archivo es 'cartas.json' o si existe el atributo 'cartas'
-        if filename == 'cartas.json':
+        if filename == 'Cartas/cartas.json':
             return json_object
         else:
             return json_object.get("cartas", [])
 
 # Ordena alfabéticamente las cartas por nombre
 def sorting(cards):
-    ordered = sorted(cards, key=lambda d: d["nombre"])
+    ordered = sorted(cards, key=lambda d: d["nombre"].lower())
     return ordered
 
 # Crea una lista con todos los valores de un atributo específico de las cartas
@@ -29,7 +29,7 @@ def cardAttribute(attribute, cards):
     return info
 
 # Busca la información de una carta específica basada en su nombre
-def cardInfo(name, filename='cartas.json'):
+def cardInfo(name, filename='Cartas/cartas.json'):
     cards = read(filename)
     sortedCards = sorting(cards)
 
@@ -42,7 +42,7 @@ def cardInfo(name, filename='cartas.json'):
         return None
 
 # Obtiene las cartas marcadas como principales
-def getMain(filename='cartas.json'):
+def getMain(filename='Cartas/cartas.json'):
     cards = read(filename)
     sortedCards = sorting(cards)
 
@@ -51,5 +51,5 @@ def getMain(filename='cartas.json'):
     return info
 
 # Verifica si el archivo existe
-def exists(filename='cartas.json'):
+def exists(filename='Cartas/cartas.json'):
     return os.path.isfile(filename)

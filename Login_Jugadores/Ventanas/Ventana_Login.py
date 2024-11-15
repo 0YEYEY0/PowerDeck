@@ -1,9 +1,13 @@
 import tkinter as tk
-import funciones_login as funciones_login
-import Login_Jugadores.Ventanas.Ventana_Crear_Cuenta as Ventana_Crear_Cuenta
 import sys
+import os
 
-sys.path.insert(0, 'C:/Users/menei/Documents/GitHub/PowerDeck/Login_Jugadores')
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores'))
+
+import funciones_login as funciones_login
+import Ventana_Crear_Cuenta as Ventana_Crear_Cuenta
+
 
 # Interfaz de inicio de sesión
 ventana = tk.Tk()

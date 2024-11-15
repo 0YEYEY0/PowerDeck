@@ -1,7 +1,11 @@
-import Cartas.Album as Album
 import tkinter as tk
 from tkinter import messagebox
-import Cartas.Crear_Deck as Crear_Deck
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck'))
+import Album as Album
+import Crear_Deck as Crear_Deck
 import Matchmaking
 
 # Abre la ventana del jugador

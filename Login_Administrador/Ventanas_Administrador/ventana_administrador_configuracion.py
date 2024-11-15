@@ -1,6 +1,11 @@
 import tkinter as tk
-import Cartas.Album as Album
-import Cartas.interfaz as interfaz
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador'))
+import Album as Album
+import interfaz as interfaz
+import Crear_Admin
 # Abre la ventana del administrador
 def ventana_administrador_configuracion(ventana):
 
@@ -20,6 +25,10 @@ def ventana_administrador_configuracion(ventana):
     # Botón para crear carta
     boton_crear_carta = tk.Button(ventana_admin, text="Crear Carta", command= interfaz.main)
     boton_crear_carta.pack(pady=10)
+
+    # Botón para crear cuenta admin
+    boton_crear_cuenta = tk.Button(ventana_admin, text="Crear Cuenta Administrador", command=lambda: Crear_Admin.main(ventana_admin))
+    boton_crear_cuenta.pack(pady=10)
 
     # Botón para cerrar sesion
     boton_cerrar_sesion = tk.Button(ventana_admin, text="Cerrar Sesion", command=cerrar_sesion)

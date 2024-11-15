@@ -5,7 +5,7 @@ import random
 import string
 
 # Ruta del archivo JSON donde se almacenan las cartas
-FILE_PATH = 'cartas.json'
+FILE_PATH = 'Cartas/cartas.json'
 
 # Valores predefinidos para las razas oficiales y tipos de carta
 RAZAS_OFICIALES = ['Humano', 'Elfo', 'Orco', 'Dragón', 'ángel', 'Demonio']

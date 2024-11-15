@@ -1,8 +1,8 @@
 import pygame
 import pygame.event
 import pygame.transform
-from Cartas.fileReader import *
-from Cartas.Buttons import *
+from fileReader import *
+from Buttons import *
 import json
 
 def main(cuenta="admin"):
@@ -40,12 +40,12 @@ def main(cuenta="admin"):
 
     # Determina el archivo de cartas basado en el tipo de cuenta
     if cuenta == "admin":
-        card_file = 'cartas.json'
+        card_file = 'Cartas/cartas.json'
     else: 
         card_file = cuenta
 
     with open(card_file, 'r', encoding="utf-8") as file:
-        if card_file == 'cartas.json':
+        if card_file == 'Cartas/cartas.json':
             card_data = json.load(file)
         else:
             player_data = json.load(file)

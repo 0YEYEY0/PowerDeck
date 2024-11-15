@@ -1,6 +1,9 @@
 import json
 import hashlib
 import random
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas'))
 import Ventanas.Ventana_Jugador as ventana_jugador
 import tkinter as tk
 from tkinter import messagebox
@@ -51,7 +54,7 @@ def validar_admin(nombre_usuario, contraseña):
 
 def cuenta_existente(nombre_usuario):
     try:
-        with open(f"{nombre_usuario}_cuenta.json", 'r') as archivo:
+        with open("Jugadores/"+f"{nombre_usuario}_cuenta.json", 'r') as archivo:
             return True
     except FileNotFoundError:
         return False
@@ -144,13 +147,13 @@ def procesar_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona,
 
     # Carga las cartas en cartas_disponibles desde el archivo json
     try:
-        cartas_disponibles = cargar_cartas("C:/Users/menei/Documents/GitHub/PowerDeck/Cartas/cartas.json")
+        cartas_disponibles = cargar_cartas("Cartas/cartas.json")
     except FileNotFoundError:
         messagebox.showerror("Error", "Archivo de cartas no encontrado.")
         return
 
     cuenta = crear_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona, pais)
-    ruta_guardado = f"{nombre_usuario}_cuenta.json"
+    ruta_guardado = "Jugadores/"+f"{nombre_usuario}_cuenta.json"
     guardar_cuenta(cuenta, ruta_guardado)
     messagebox.showinfo("Cuenta Creada", "Cuenta creada con éxito.")
 

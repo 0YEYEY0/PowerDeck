@@ -1,10 +1,13 @@
 import tkinter as tk
-import Cartas.Album as Album
-import Cartas.interfaz as interfaz
-import Crear_Admin
 import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador'))
+import Album as Album
+import interfaz as interfaz
+import Crear_Admin
 
-sys.path.insert(0, 'C:/Users/menei/Documents/GitHub/PowerDeck/Cartas')
+
 
 # Abre la ventana del administrador
 def ventana_administrador(ventana):

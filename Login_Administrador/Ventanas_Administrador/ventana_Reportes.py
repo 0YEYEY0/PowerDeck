@@ -1,5 +1,9 @@
 import tkinter as tk
-import Cartas.fileReader as fileReader
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador'))
+import fileReader as fileReader
 import reportes
 
 # Abre la ventana del administrador

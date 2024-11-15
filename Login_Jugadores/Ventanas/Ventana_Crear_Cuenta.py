@@ -1,4 +1,7 @@
 import tkinter as tk
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores'))
 import Login_Jugadores.funciones_login as funciones_login
 from tkinter import messagebox
 
