@@ -3,7 +3,7 @@ from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 import random
 import string
-from cartas import guardar_carta
+from Cartas.cartas import guardar_carta
 
 def main():
     # Configuración básica de Pygame

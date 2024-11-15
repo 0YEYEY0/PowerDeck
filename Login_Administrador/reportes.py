@@ -1,5 +1,5 @@
 import os 
-import fileReader
+import Cartas.fileReader as fileReader
 import json
 from collections import Counter
 

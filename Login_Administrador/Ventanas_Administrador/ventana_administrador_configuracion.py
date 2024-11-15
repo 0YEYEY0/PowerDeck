@@ -1,6 +1,6 @@
 import tkinter as tk
-import Album
-import interfaz
+import Cartas.Album as Album
+import Cartas.interfaz as interfaz
 # Abre la ventana del administrador
 def ventana_administrador_configuracion(ventana):
 

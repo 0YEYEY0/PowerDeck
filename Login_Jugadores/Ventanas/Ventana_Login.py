@@ -1,6 +1,9 @@
 import tkinter as tk
-import funciones_login
-import interfaz_crear_cuenta
+import funciones_login as funciones_login
+import Login_Jugadores.Ventanas.Ventana_Crear_Cuenta as Ventana_Crear_Cuenta
+import sys
+
+sys.path.insert(0, 'C:/Users/menei/Documents/GitHub/PowerDeck/Login_Jugadores')
 
 # Interfaz de inicio de sesión
 ventana = tk.Tk()
@@ -24,7 +27,7 @@ boton_iniciar_sesion = tk.Button(ventana, text="Iniciar Sesión", command=lambda
 boton_iniciar_sesion.pack(pady=5)
 
 # Botón para crear cuenta
-boton_crear_cuenta = tk.Button(ventana, text="Crear Cuenta", command=lambda: interfaz_crear_cuenta.main(ventana))
+boton_crear_cuenta = tk.Button(ventana, text="Crear Cuenta", command=lambda: Ventana_Crear_Cuenta.main(ventana))
 boton_crear_cuenta.pack(pady=5)
 
 ventana.mainloop()

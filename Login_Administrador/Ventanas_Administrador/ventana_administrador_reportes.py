@@ -1,5 +1,5 @@
 import tkinter as tk
-import ventana_Reportes
+import Login_Administrador.Ventanas_Administrador.ventana_Reportes as ventana_Reportes
 # Abre la ventana del administrador
 def ventana_administrador_reportes(ventana):
 

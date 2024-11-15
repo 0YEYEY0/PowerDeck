@@ -1,9 +1,9 @@
 import json
 import random
 import hashlib
-import ventana_administrador
-import ventana_administrador_configuracion
-import ventana_administrador_reportes
+import Ventanas_Administrador.ventana_administrador as ventana_administrador
+import Ventanas_Administrador.ventana_administrador_configuracion as ventana_administrador_configuracion
+import Ventanas_Administrador.ventana_administrador_reportes as ventana_administrador_reportes
 import tkinter as tk
 from tkinter import messagebox
 
@@ -77,10 +77,6 @@ def procesar_inicio_sesion():
                     ventana_administrador_configuracion.ventana_administrador_configuracion(ventana)
                 else:
                     ventana_administrador_reportes.ventana_administrador_reportes(ventana)
-    
-
-    
-
 
 # Interfaz
 ventana = tk.Tk()

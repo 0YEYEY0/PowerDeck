@@ -1,8 +1,8 @@
 import pygame
 import pygame.event
 import pygame.transform
-from fileReader import *
-from Buttons import *
+from Cartas.fileReader import *
+from Cartas.Buttons import *
 import json
 
 def main(cuenta="admin"):

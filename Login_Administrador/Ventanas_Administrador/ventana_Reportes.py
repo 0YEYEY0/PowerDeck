@@ -1,5 +1,5 @@
 import tkinter as tk
-import fileReader
+import Cartas.fileReader as fileReader
 import reportes
 
 # Abre la ventana del administrador
