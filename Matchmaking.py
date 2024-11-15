@@ -3,10 +3,9 @@ import socket
 import threading
 import time
 
-# Variable para controlar la búsqueda
-buscando = False
-
 def main():
+    # Variable para controlar la búsqueda
+    buscando = False
 
     def buscar_partida():
         global buscando
@@ -46,7 +45,7 @@ def main():
 
 
     # Crear la ventana de Tkinter
-    root = tk.Tk()
+    root = tk.Toplevel()
     root.title("Matchmaking")
     root.geometry("400x300")  # Aumentar el tamaño de la ventana
 
