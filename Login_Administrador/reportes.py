@@ -33,16 +33,12 @@ def uso_carta(carta_usada, es_principal=True):
                         nom_principal.append(usadas["nombre"])
                     else:
                         nom_variante.append(usadas["nombre"])
-        else:
-            return 0
-        
+                          
     if es_principal:
         return nom_principal.count(carta_usada)
     else:
         return nom_variante.count(carta_usada)
                       
-print (uso_carta("Sprint2", False))
-print (uso_carta("Sprint2", True))
-    
+
             
 
