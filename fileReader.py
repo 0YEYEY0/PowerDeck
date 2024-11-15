@@ -1,64 +1,55 @@
 import json
 import os.path
 
-# Reads through the entire json file
-def read(file_path='cartas.json'):
-    # Opening JSON file
-    with open(file_path, 'r') as openfile:
-        # Reading from json file
+# Lee todo el contenido del archivo JSON
+def read(filename='cartas.json'):
+    # Abre el archivo JSON
+    with open(filename, 'r') as openfile:
+        # Lee el contenido del archivo JSON
         json_object = json.load(openfile)
-        
-        # If the file is not 'cartas.json', extract the 'cartas' attribute
-        if file_path != 'cartas.json':
-            json_object = json_object.get('cartas', [])
-        
-        return json_object
 
-# Reads through all json file
-def lector(path):
-    # Opening JSON file
-    with open(path, 'r') as openfile:
-        # Reading from json file
-        json_object = json.load(openfile)
-        
-        return json_object
-# Alphabetically sorts the cards/file elements by name
-def sorting(card):
-    ordered = sorted(card, key=lambda d: d["nombre"])
+        # Verifica si el archivo es 'cartas.json' o si existe el atributo 'cartas'
+        if filename == 'cartas.json':
+            return json_object
+        else:
+            return json_object.get("cartas", [])
+
+# Ordena alfabéticamente las cartas por nombre
+def sorting(cards):
+    ordered = sorted(cards, key=lambda d: d["nombre"])
     return ordered
 
-# Function to create list with all values from one attribute of the album of cards
-def cardAttribute(attribute, list):
-    # Alphabetically sorts the cards
-    sortedCards = sorting(list)
+# Crea una lista con todos los valores de un atributo específico de las cartas
+def cardAttribute(attribute, cards):
+    # Ordena alfabéticamente las cartas
+    sortedCards = sorting(cards)
 
-    # Find all values or text from specific card attribute 
+    # Encuentra todos los valores del atributo específico de las cartas
     info = [card[attribute] for card in sortedCards]
     return info
 
-# Function to find a specific card's info based on its name
-def cardInfo(id, file_path='cartas.json'):
-    json_object = read(file_path)
-    
-    # Alphabetically sorts the cards/file elements
-    sortedCards = sorting(json_object)
+# Busca la información de una carta específica basada en su nombre
+def cardInfo(name, filename='cartas.json'):
+    cards = read(filename)
+    sortedCards = sorting(cards)
 
-    # Find info from a specific card
-    info = list(filter(lambda card: card["nombre"] == id, sortedCards))
-    data = list(dict(info[0]).values()) if info else [] # list of values 
-    return data
+    # Encuentra la información de una carta específica
+    info = list(filter(lambda card: card["nombre"] == name, sortedCards))
+    if info:
+        data = list(dict(info[0]).values())  # Lista de valores
+        return data
+    else:
+        return None
 
-def getMain(file_path='cartas.json'):
-    json_object = read(file_path)
+# Obtiene las cartas marcadas como principales
+def getMain(filename='cartas.json'):
+    cards = read(filename)
+    sortedCards = sorting(cards)
 
-    # Alphabetically sorts the cards/file elements
-    sortedCards = sorting(json_object)
-
-    # Find info from a specific card
-    info = list(filter(lambda card: card["es_principal"] == True, sortedCards))
+    # Encuentra las cartas marcadas como 'principal'
+    info = list(filter(lambda card: card.get("es_principal", False), sortedCards))
     return info
 
-# Function to check if file exists
-def exists(file_path='cartas.json'):
-    check = os.path.isfile(file_path)
-    return check
+# Verifica si el archivo existe
+def exists(filename='cartas.json'):
+    return os.path.isfile(filename)

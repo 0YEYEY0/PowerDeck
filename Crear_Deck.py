@@ -104,13 +104,13 @@ class DeckManagerApp:
             return
 
         # Verificar si la carta ya está en el mazo
-        if any(c["id"] == card["id"] for c in deck["cartas"]):
-            messagebox.showerror("Error", f"La carta '{card['nombre']}' ya está en el mazo.")
+        if any(c['nombre'] == card['nombre'] and c['variante'] == card['variante'] for c in deck['cartas']):
+            messagebox.showwarning("Advertencia", "Esta carta ya está en el mazo.")
             return
 
         # Verificar restricciones de cantidad por tipo
         tipo_carta = card["tipo_carta"]
-        restricciones_tipo = {"Ultra Rara": 0.1, "Muy Rara": 0.15, "Rara": 0.2, "Normal": 0.6, "Basica": 1.0}
+        restricciones_tipo = {"Ultra Rara": 0.1, "Muy-Rara": 0.15, "Rara": 0.2, "Normal": 0.6, "Basica": 1.0}
         max_tipo = int(self.deck_size * restricciones_tipo.get(tipo_carta, 0))
         
         current_count = sum(1 for c in deck["cartas"] if c["tipo_carta"] == tipo_carta)

@@ -1,20 +1,17 @@
 import json
 import random
 import hashlib
-import ventana_administrador
 import ventana_jugador
 import tkinter as tk
 from tkinter import messagebox
 
-cantidadCartas = 10
+cantidadCartas = 7
 
 # Carga las cartas desde un archivo JSON
 def cargar_cartas(ruta_archivo):
     with open(ruta_archivo, 'r') as archivo:
         return json.load(archivo)
 
-
-# Asigna cartas aleatorias a un jugador
 def asignar_cartas(cartas_disponibles, cantidad):
     if len(cartas_disponibles) < cantidad:
         return cartas_disponibles  # Si hay menos de 20 cartas, asigna todas las disponibles
@@ -22,7 +19,7 @@ def asignar_cartas(cartas_disponibles, cantidad):
     # Define las probabilidades según la rareza
     probabilidades = {
         "Ultra-Rara": 0.05,
-        "Muy Rara": 0.12,
+        "Muy-Rara": 0.12,
         "Rara": 0.18,
         "Normal": 0.25,
         "Básica": 0.40
@@ -35,12 +32,26 @@ def asignar_cartas(cartas_disponibles, cantidad):
         probabilidad = probabilidades.get(rareza, 0.40)  # Asume 40% si la rareza no está en el diccionario
         cartas_con_probabilidades.extend([carta] * int(probabilidad * 100))
 
-    # Seleccionar cartas aleatorias basadas en las probabilidades
-    return random.sample(cartas_con_probabilidades, cantidad)
+    # Seleccionar cartas aleatorias basadas en las probabilidades sin repetir nombres a menos que tengan variantes
+    cartas_asignadas = []
+    nombres_asignados = set()
+    while len(cartas_asignadas) < cantidad:
+        carta_seleccionada = random.choice(cartas_con_probabilidades)
+        nombre_carta = carta_seleccionada["nombre"]
+        variante_carta = carta_seleccionada.get("variante", "")
 
+        if (nombre_carta, variante_carta) not in nombres_asignados:
+            cartas_asignadas.append(carta_seleccionada)
+            nombres_asignados.add((nombre_carta, variante_carta))
+
+    # Mostrar mensaje con las cartas asignadas
+    nombres_cartas_asignadas = [carta["nombre"] for carta in cartas_asignadas]
+    messagebox.showinfo("Cartas Asignadas", f"Se te han asignado las siguientes cartas: {', '.join(nombres_cartas_asignadas)}")
+
+    return cartas_asignadas
 
 # Crea una cuenta de usuario
-def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_administrador, cartas_disponibles):
+def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, cartas_disponibles):
     hash_contraseña = hashlib.sha256(contraseña.encode()).hexdigest()  # Cifra la contraseña
 
     cuenta = {
@@ -49,19 +60,16 @@ def crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_a
         "correo": correo,
         "nombre_persona": nombre_persona,
         "pais": pais,
-        "es_administrador": es_administrador,
         "cartas": []
     }
-    if not es_administrador:
-        cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidadCartas)
+    
+    cuenta["cartas"] = asignar_cartas(cartas_disponibles, cantidadCartas)
     return cuenta
-
 
 # Guarda la cuenta en un archivo JSON
 def guardar_cuenta(cuenta, ruta_archivo):
     with open(ruta_archivo, 'w') as archivo:
         json.dump(cuenta, archivo, indent=4)
-
 
 # Valida que se haya ingresado todos los datos
 def validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pais):
@@ -69,20 +77,6 @@ def validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pai
         messagebox.showerror("Error", "Por favor, ingresa todos los datos solicitados.")
         return False
     return True
-
-
-# Verifica si las credenciales son válidas para crear una cuenta de administrador
-def validar_admin(nombre_usuario, contraseña):
-    try:
-        with open("admin_cuenta.json", 'r') as archivo:
-            admin_data = json.load(archivo)
-            for usuario in admin_data["usuarios_autorizados"]:
-                if usuario["nombre_usuario"] == nombre_usuario and usuario["contraseña"] == hashlib.sha256(contraseña.encode()).hexdigest():
-                    return True
-    except FileNotFoundError:
-        messagebox.showerror("Error", "Archivo de administrador no encontrado.")
-    return False
-
 
 # Verifica si la cuenta ya existe
 def cuenta_existente(nombre_usuario):
@@ -100,7 +94,7 @@ def procesar_creacion_cuenta():
     correo = entry_correo.get()
     nombre_persona = entry_nombre.get()
     pais = entry_pais.get()
-    es_administrador = var_tipo.get() == "Administrador"
+    #es_administrador = var_tipo.get() == "Administrador"
 
     # Validación de datos
     if not validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pais):
@@ -111,25 +105,17 @@ def procesar_creacion_cuenta():
         messagebox.showerror("Error", "La cuenta ya está creada.")
         return
 
-    # Si es administrador, validar credenciales
-    if es_administrador:
-        if not validar_admin(nombre_usuario, contraseña):
-            messagebox.showerror("Error", "Credenciales de administrador no válidas.")
-            return
-
-
     cartas_disponibles = []
 
     # Carga las cartas en cartas_disponibles desde el archivo json
-    if not es_administrador:
-        try:
-            cartas_disponibles = cargar_cartas("cartas.json")
-        except FileNotFoundError:
-            messagebox.showerror("Error", "Archivo de cartas no encontrado.")
-            return
+    try:
+        cartas_disponibles = cargar_cartas("cartas.json")
+    except FileNotFoundError:
+        messagebox.showerror("Error", "Archivo de cartas no encontrado.")
+        return
 
-    cuenta = crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, es_administrador, cartas_disponibles)
-    ruta_guardado = "Jugadores/" + f"{nombre_usuario}_cuenta.json"
+    cuenta = crear_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais, cartas_disponibles)
+    ruta_guardado = f"{nombre_usuario}_cuenta.json"
     guardar_cuenta(cuenta, ruta_guardado)
     messagebox.showinfo("Cuenta Creada", "Cuenta creada con éxito.")
 
@@ -139,8 +125,6 @@ def procesar_creacion_cuenta():
     entry_correo.delete(0, tk.END)
     entry_nombre.delete(0, tk.END)
     entry_pais.delete(0, tk.END)
-
-
 
 # Verifica los datos para iniciar sesión
 def procesar_inicio_sesion():
@@ -154,7 +138,7 @@ def procesar_inicio_sesion():
     if not validacion_de_datos(nombre_usuario, contraseña, correo, nombre_persona, pais):
         return
 
-    ruta_cuenta = "Jugadores/"+f"{nombre_usuario}_cuenta.json"
+    ruta_cuenta = f"{nombre_usuario}_cuenta.json"
     try:
         with open(ruta_cuenta, 'r') as archivo:
             cuenta = json.load(archivo)
@@ -180,13 +164,9 @@ def procesar_inicio_sesion():
         entry_nombre.delete(0, tk.END)
         entry_pais.delete(0, tk.END)
 
-        if cuenta["es_administrador"]:
-            ventana_administrador.ventana_administrador(ventana)
-        else:
-            ventana_jugador.ventana_jugador(cuenta, ventana, ruta_cuenta)
+        ventana_jugador.ventana_jugador(cuenta, ventana, ruta_cuenta)
     else:
         messagebox.showerror("Error", "Uno o más datos son incorrectos.")
-
 
 # Interfaz
 ventana = tk.Tk()
@@ -222,15 +202,6 @@ label_pais = tk.Label(ventana, text="País:")
 label_pais.pack(pady=5)
 entry_pais = tk.Entry(ventana)
 entry_pais.pack(pady=5)
-
-# Check jugador-admin
-var_tipo = tk.StringVar(value="Jugador")
-label_tipo = tk.Label(ventana, text="Tipo de Cuenta:")
-label_tipo.pack(pady=5)
-radio_jugador = tk.Radiobutton(ventana, text="Jugador", variable=var_tipo, value="Jugador")
-radio_administrador = tk.Radiobutton(ventana, text="Administrador", variable=var_tipo, value="Administrador")
-radio_jugador.pack()
-radio_administrador.pack()
 
 # Botón para crear la cuenta
 boton_crear = tk.Button(ventana, text="Crear Cuenta", command=procesar_creacion_cuenta)
