@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import sys
 import os
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck'))
 import Album as Album
 import Crear_Deck as Crear_Deck
 import Matchmaking

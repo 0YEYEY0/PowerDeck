@@ -3,7 +3,7 @@ import hashlib
 import random
 import sys
 import os
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores/Ventanas'))
 import Ventanas.Ventana_Jugador as ventana_jugador
 import tkinter as tk
 from tkinter import messagebox
@@ -19,7 +19,11 @@ def validacion_creacion_cuenta(nombre_usuario, contraseña, correo, nombre_perso
     if not nombre_usuario or not contraseña or not correo or not nombre_persona or not pais:
         messagebox.showerror("Error", "Por favor, ingresa todos los datos solicitados.")
         return False
+    if not (4 <= len(contraseña) <= 6) or not contraseña.isalnum():
+        messagebox.showerror("Error", "La contraseña debe ser alfanumérica y contener de 4 a 6 caracteres.")
+        return False
     return True
+
 def procesar_inicio_sesion(contraseña, correo):
     if not validacion_inicio_sesion(contraseña, correo):
         return False
@@ -58,6 +62,15 @@ def cuenta_existente(nombre_usuario):
             return True
     except FileNotFoundError:
         return False
+    
+def correo_existente(correo):
+    try:
+        with open("Jugadores/correos.json", 'r') as archivo:
+            correos = json.load(archivo)
+            return correo in correos
+    except FileNotFoundError:
+        return False
+    
 def iniciar_sesion(correo, contraseña, ventana, entry_contraseña, entry_correo):
     cuenta = procesar_inicio_sesion(contraseña, correo)
     ruta_cuenta = "Jugadores/" + f"{correo}_cuenta.json"
@@ -134,15 +147,31 @@ def guardar_cuenta(cuenta, ruta_archivo):
     with open(ruta_archivo, 'w') as archivo:
         json.dump(cuenta, archivo, indent=4)
 
+def guardar_correo(correo, ruta_archivo):
+    try:
+        with open(ruta_archivo, 'r') as archivo:
+            correos = json.load(archivo)
+    except FileNotFoundError:
+        correos = []
+
+    correos.append(correo)
+
+    with open(ruta_archivo, 'w') as archivo:
+        json.dump(correos, archivo, indent=4)
+
 def procesar_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona, pais, ventana):
 
     # Validación de datos
-
     if not validacion_creacion_cuenta(nombre_usuario, contraseña, correo, nombre_persona, pais):
         return  # Detener si la validación falla
     # Verificar si la cuenta ya existe
     if cuenta_existente(nombre_usuario):
-        messagebox.showerror("Error", "La cuenta ya está creada.")
+        messagebox.showerror("Error", "Ya existe este nombre de usuario.")
+        return
+    
+    #Verificar que el correo sea unico
+    if correo_existente(correo):
+        messagebox.showerror("Error", "Este correo ya esta asociado a otro nombre de usuario.")
         return
 
     # Carga las cartas en cartas_disponibles desde el archivo json
@@ -155,6 +184,7 @@ def procesar_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona,
     cuenta = crear_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona, pais)
     ruta_guardado = "Jugadores/"+f"{nombre_usuario}_cuenta.json"
     guardar_cuenta(cuenta, ruta_guardado)
+    guardar_correo(correo, "Jugadores/correos.json")
     messagebox.showinfo("Cuenta Creada", "Cuenta creada con éxito.")
 
     ventana.destroy()
