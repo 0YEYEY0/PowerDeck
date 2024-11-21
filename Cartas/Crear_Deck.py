@@ -82,26 +82,28 @@ class DeckManagerApp:
             messagebox.showerror("Error", "Ya existe un mazo con este nombre.")
             return
 
-        # Agregar el nuevo mazo a la lista de mazos
-        new_deck = {"nombre": deck_name, "cartas": []}
-        self.decks.append(new_deck)
-        self.save_user_data()
-        messagebox.showinfo("Éxito", f"Mazo '{deck_name}' creado exitosamente.")
+        # Verificar si hay un mazo temporal ya creado
+        if hasattr(self, "temp_deck") and self.temp_deck:
+            messagebox.showerror("Error", "Ya tienes un mazo en progreso. Completa el mazo antes de crear otro.")
+            return
+
+        # Crear el mazo temporal
+        self.temp_deck = {"nombre": deck_name, "cartas": []}
+        messagebox.showinfo("Información", f"Mazo '{deck_name}' creado. Agrega al menos 5 cartas para guardarlo.")
 
     def add_card_to_deck(self):
-        # Agregar una carta seleccionada al mazo activo
+        # Agregar una carta seleccionada al mazo temporal o activo
         selected_card_index = self.card_listbox.curselection()
         if not selected_card_index:
             messagebox.showerror("Error", "Selecciona una carta para agregar al mazo.")
             return
         
         card = self.cards[selected_card_index[0]]
-        deck_name = self.deck_name_entry.get().strip()
-        
-        deck = next((deck for deck in self.decks if deck["nombre"] == deck_name), None)
-        if not deck:
+        if not hasattr(self, "temp_deck") or not self.temp_deck:
             messagebox.showerror("Error", "Por favor, selecciona o crea un mazo primero.")
             return
+
+        deck = self.temp_deck
 
         # Verificar si la carta ya está en el mazo
         if any(c['nombre'] == card['nombre'] and c['variante'] == card['variante'] for c in deck['cartas']):
@@ -122,10 +124,16 @@ class DeckManagerApp:
             messagebox.showerror("Error", "El mazo ha alcanzado el tamaño máximo permitido.")
             return
 
-        # Agregar la carta al mazo
+        # Agregar la carta al mazo temporal
         deck["cartas"].append(card)
-        self.save_user_data()
-        messagebox.showinfo("Éxito", f"Carta '{card['nombre']}' agregada al mazo '{deck_name}'.")
+        messagebox.showinfo("Éxito", f"Carta '{card['nombre']}' agregada al mazo '{deck['nombre']}'.")
+
+        # Verificar si el mazo tiene al menos 5 cartas para guardarlo
+        if len(deck["cartas"]) >= 5:
+            self.decks.append(deck)
+            self.temp_deck = None  # Limpiar el mazo temporal
+            self.save_user_data()
+            messagebox.showinfo("Éxito", f"Mazo '{deck['nombre']}' guardado exitosamente.")
 
     def show_decks(self):
         # Mostrar todos los mazos creados por el usuario

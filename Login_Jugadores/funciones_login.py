@@ -98,7 +98,7 @@ def asignar_cartas(cartas_disponibles, cantidad):
         "Muy-Rara": 0.12,
         "Rara": 0.18,
         "Normal": 0.25,
-        "Básica": 0.40
+        "Basica": 0.40
     }
 
     # Crear una lista de cartas con probabilidades
@@ -182,7 +182,7 @@ def procesar_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona,
         return
 
     cuenta = crear_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona, pais)
-    ruta_guardado = "Jugadores/"+f"{nombre_usuario}_cuenta.json"
+    ruta_guardado = "Jugadores/"+f"{correo}_cuenta.json"
     guardar_cuenta(cuenta, ruta_guardado)
     guardar_correo(correo, "Jugadores/correos.json")
     messagebox.showinfo("Cuenta Creada", "Cuenta creada con éxito.")
