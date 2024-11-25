@@ -2,9 +2,10 @@ import tkinter as tk
 import sys
 import os
 
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores/Ventanas'))
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores'))
-
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores/Ventanas'))
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores'))
+sys.path.append(os.path.abspath("C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas"))
+sys.path.append(os.path.abspath("C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores"))
 import funciones_login as funciones_login
 import Ventana_Crear_Cuenta as Ventana_Crear_Cuenta
 
