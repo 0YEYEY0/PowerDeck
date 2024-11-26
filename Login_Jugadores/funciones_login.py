@@ -5,9 +5,12 @@ import sys
 import os
 #sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores/Ventanas'))
 sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
 import Ventanas.Ventana_Jugador as ventana_jugador
+import cartas as id
 import tkinter as tk
 from tkinter import messagebox
+
 
 # Valida que se haya ingresado todos los datos
 def validacion_inicio_sesion(contraseña, correo):
@@ -43,19 +46,6 @@ def procesar_inicio_sesion(contraseña, correo):
     else:
         messagebox.showerror("Error", "Uno o más datos son incorrectos.")
         return False
-
-# Verifica si las credenciales son válidas para crear una cuenta de administrador
-def validar_admin(nombre_usuario, contraseña):
-    try:
-        with open("admin_cuenta.json", 'r') as archivo:
-            admin_data = json.load(archivo)
-            for usuario in admin_data["usuarios_autorizados"]:
-                if usuario["nombre_usuario"] == nombre_usuario and usuario["contraseña"] == hashlib.sha256(
-                        contraseña.encode()).hexdigest():
-                    return True
-    except FileNotFoundError:
-        messagebox.showerror("Error", "Archivo de administrador no encontrado.")
-    return False
 
 def cuenta_existente(nombre_usuario):
     try:
@@ -131,6 +121,7 @@ def crear_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona, pa
     hash_contraseña = hashlib.sha256(contraseña.encode()).hexdigest()  # Cifra la contraseña
 
     cuenta = {
+        "id": id.generar_id_unico(),
         "nombre_usuario": nombre_usuario,
         "contraseña": hash_contraseña,
         "correo": correo,
