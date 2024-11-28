@@ -3,17 +3,21 @@ import random
 import hashlib
 import sys
 import os
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Administrador/Ventanas_Administrador'))
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Administrador/Ventanas_Administrador'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador/Ventanas_Administrador'))
+
 import Ventanas_Administrador.ventana_administrador as ventana_administrador
 import Ventanas_Administrador.ventana_administrador_configuracion as ventana_administrador_configuracion
 import Ventanas_Administrador.ventana_administrador_reportes as ventana_administrador_reportes
 import tkinter as tk
 from tkinter import messagebox
 
+admin_cuenta_ruta = "Administradores/admin_cuenta.json"
+
 # Verifica si las credenciales son válidas
 def validar_admin(nombre_usuario, correo, contraseña):
     try:
-        with open("Administradores/admin_cuenta.json", 'r') as archivo:
+        with open(admin_cuenta_ruta, 'r') as archivo:
             admin_data = json.load(archivo)
             #verifica admin padre
             if (admin_data["nombre_usuario"] == nombre_usuario and admin_data["correo"] == correo and
@@ -41,7 +45,7 @@ def procesar_inicio_sesion():
         return
     try:
         #ruta_admin = f"{nombre_usuario}_cuenta.json"
-        with open("Administradores/admin_cuenta.json", 'r') as archivo:
+        with open(admin_cuenta_ruta, 'r') as archivo:
             admin = json.load(archivo)
     except FileNotFoundError:
         messagebox.showerror("Error", "Cuenta no encontrada.")

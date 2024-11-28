@@ -2,12 +2,16 @@ import json
 import hashlib
 import tkinter as tk
 from tkinter import messagebox
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+import cartas as cartas
 
 def main(ventana):
     # Función para agregar un nuevo administrador
-
+    admin_cuenta_ruta = "Administradores/admin_cuenta.json"
     def agregar_admin():
-        with open("admin_cuenta.json", 'r') as archivo:
+        with open(admin_cuenta_ruta, 'r') as archivo:
             data = json.load(archivo)
 
         if not validacion_datos(usuario.get(), correo.get(), contrasena.get()):
@@ -20,6 +24,7 @@ def main(ventana):
             es_usuario_reportes = True
 
         nuevo_admin = {
+            "id": cartas.generar_id_unico(),
             "nombre_usuario": usuario.get(),
             "correo": correo.get(),
             "contraseña": hashlib.sha256(contrasena.get().encode()).hexdigest(),  # Encriptar la contraseña
@@ -32,7 +37,7 @@ def main(ventana):
         data['usuarios_autorizados'].append(nuevo_admin)
 
         # Guardar los cambios en el archivo JSON
-        with open("admin_cuenta.json", 'w') as archivo:
+        with open(admin_cuenta_ruta, 'w') as archivo:
             json.dump(data, archivo, indent=4)
 
         messagebox.showinfo("Finalizado", "Cuenta agregada con exito")
@@ -48,7 +53,7 @@ def main(ventana):
 
     ventana.withdraw()
 
-    ventana_crear_cuenta = tk.Tk()
+    ventana_crear_cuenta = tk.Toplevel()
     ventana_crear_cuenta.title("Creacion Cuenta Admin")
     ventana_crear_cuenta.geometry("300x300")
 
@@ -68,17 +73,18 @@ def main(ventana):
     contrasena.pack(pady=5)
 
     # Check tipos de admin
-    var_tipo = tk.StringVar(value="Usuario configuracion")
+    var_tipo = tk.StringVar()
+    var_tipo.set(value="Usuario configuracion")
  
     label_tipo = tk.Label(ventana_crear_cuenta, text="Tipo de Cuenta:")
     label_tipo.pack(pady=5)
-    radio_usuario_configuracion = tk.Radiobutton(ventana_crear_cuenta, text="Usuario configuracion", value="Usuario configuracion")
-    radio_usuario_reportes = tk.Radiobutton(ventana_crear_cuenta, text="Usuario reportes", value="Usuario reportes")
+    radio_usuario_configuracion = tk.Radiobutton(ventana_crear_cuenta, text="Usuario configuracion", variable= var_tipo, value="Usuario configuracion")
+    radio_usuario_reportes = tk.Radiobutton(ventana_crear_cuenta, text="Usuario reportes", variable=var_tipo, value="Usuario reportes")
     radio_usuario_configuracion.pack()
     radio_usuario_reportes.pack()
 
 
     # Botón para crear cuenta admin
-    boton_ver_album = tk.Button(ventana_crear_cuenta, text="Crear Cuenta", command=agregar_admin)
-    boton_ver_album.pack(pady=10)
+    boton_crear_admin = tk.Button(ventana_crear_cuenta, text="Crear Cuenta", command=agregar_admin)
+    boton_crear_admin.pack(pady=10)
 
