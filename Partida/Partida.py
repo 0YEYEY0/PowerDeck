@@ -3,7 +3,9 @@ import pygame.event
 import pygame.transform
 import sys 
 import os
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+
+# Agrega la ruta del directorio de cartas al path del sistema
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
 import fileReader as fileReader
 import Buttons as Buttons
 import json
@@ -60,7 +62,7 @@ def main(cuenta, cantidad_mano_cartas=6):
                                 (pantalla_y/2))
     font_atributo_ronda = pygame.font.SysFont(None, 18)
     atributos_carta = random.choice(fileReader.atributos())
-
+    print(atributos_carta)
 
     # Nombre de la ventana de pygame
     pygame.display.set_caption('PowerDeck Partida')
@@ -112,6 +114,7 @@ def main(cuenta, cantidad_mano_cartas=6):
                 
     card_file = cuenta
 
+    # Cargar datos de las cartas del archivo JSON
     with open(card_file, 'r', encoding="utf-8") as file:
         player_data = json.load(file)
         card_data = player_data['cartas']
@@ -158,6 +161,15 @@ def main(cuenta, cantidad_mano_cartas=6):
             x += imageSize[0]
         return cards
 
+    # Mostrar la carta seleccionada y su atributo
+    def display_selected_card(card):
+        pantalla.blit(imageAlbum(card['nombre']), (250, 150))
+        print(card['nombre'])
+        attribute_value = card['atributos'].get(atributos_carta)
+        text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
+        pantalla.blit(text, (250, 300))
+        return attribute_value
+
     Album = []  # Álbum de cartas que se muestra
 
     # Bucle principal del juego
@@ -166,8 +178,9 @@ def main(cuenta, cantidad_mano_cartas=6):
         pantalla.fill(pantalla_color)
         mano_jugadores()
         area_juego()
+        selected_card = None
+        card_selected = False
     
-
         # Cuenta el total de cartas y crea las ubicaciones
         cardsTotal = len([element for element in card_data if isinstance(element, dict)])
         cardLocation = createCards(cantidad_mano_cartas)
@@ -200,33 +213,49 @@ def main(cuenta, cantidad_mano_cartas=6):
                         x_offset += 85
                         y_offset = 315
 
-                    
-                    
+        if not card_selected:
+            for i in range(cantidad_mano_cartas):
+                cardX = cardLocation[i].x
+                cardY = cardLocation[i].y
+
+                Cardbutton = Buttons.Button(cardX, cardY, imageSize[0], imageSize[1], pantalla, True, imageAlbum(fileReader.cardAttribute("nombre", Album)[i]), str(fileReader.cardAttribute("nombre", Album)[i]))
+
+                if Cardbutton.hover() and pygame.mouse.get_pressed()[0]:
+                    selected_card = Album[i]
+                    card_selected = True
+                    attribute_value = display_selected_card(selected_card)
+                    print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
+
+        if card_selected:
+            pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
+            attribute_value = selected_card['atributos'].get(atributos_carta)
+            text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
+            pantalla.blit(text, (250, 300))
 
         # Muestra el temporizador
-        pygame.draw.rect(pantalla, "white", [(temporizador_coordenadas[0]-5, temporizador_coordenadas[1]-5),(80, 20)],0,0)
-        pygame.draw.rect(pantalla, "black", [(temporizador_coordenadas[0]-5, temporizador_coordenadas[1]-5),(80, 20)],5,0)
+        pygame.draw.rect(pantalla, "white", [(temporizador_coordenadas[0] - 5, temporizador_coordenadas[1] - 5), (80, 20)], 0, 0)
+        pygame.draw.rect(pantalla, "black", [(temporizador_coordenadas[0] - 5, temporizador_coordenadas[1] - 5), (80, 20)], 5, 0)
         pantalla.blit(font_temporizador.render("Tiempo:" + texto_temporizador, True, (0, 0, 0)), temporizador_coordenadas)
 
         # Muestra el atributo ronda
-        pygame.draw.rect(pantalla, "blue", [(atributo_ronda_coordenadas[0]-5, atributo_ronda_coordenadas[1]-5),(145, 20)],0,0)
-        pygame.draw.rect(pantalla, "black", [(atributo_ronda_coordenadas[0]-5, atributo_ronda_coordenadas[1]-5),(145, 20)],5,0)
+        pygame.draw.rect(pantalla, "blue", [(atributo_ronda_coordenadas[0] - 5, atributo_ronda_coordenadas[1] - 5), (145, 20)], 0, 0)
+        pygame.draw.rect(pantalla, "black", [(atributo_ronda_coordenadas[0] - 5, atributo_ronda_coordenadas[1] - 5), (145, 20)], 5, 0)
         pantalla.blit(font_atributo_ronda.render("Atributo:" + str(atributos_carta), True, (0, 0, 0)), atributo_ronda_coordenadas)
 
         # Muestra el # rondas
-        pygame.draw.rect(pantalla, "white", [(50, atributo_ronda_coordenadas[1]),(145, 20)],0,0)
-        pygame.draw.rect(pantalla, "black", [(50, atributo_ronda_coordenadas[1]),(145, 20)],5,0)
+        pygame.draw.rect(pantalla, "white", [(50, atributo_ronda_coordenadas[1]), (145, 20)], 0, 0)
+        pygame.draw.rect(pantalla, "black", [(50, atributo_ronda_coordenadas[1]), (145, 20)], 5, 0)
         pantalla.blit(font_atributo_ronda.render("# de rondas:", True, (0, 0, 0)), 
-                      ((55, atributo_ronda_coordenadas[1]+5), (50, atributo_ronda_coordenadas[1])))
+                      ((55, atributo_ronda_coordenadas[1] + 5), (50, atributo_ronda_coordenadas[1])))
         
         # Muestra victorias/derrotas de rondas
-        pygame.draw.rect(pantalla, "white", [(50, atributo_ronda_coordenadas[1]+50),(145, 40)],0,0)
-        pygame.draw.rect(pantalla, "black", [(50, atributo_ronda_coordenadas[1]+50),(145, 40)],5,0)
+        pygame.draw.rect(pantalla, "white", [(50, atributo_ronda_coordenadas[1] + 50), (145, 40)], 0, 0)
+        pygame.draw.rect(pantalla, "black", [(50, atributo_ronda_coordenadas[1] + 50), (145, 40)], 5, 0)
         pantalla.blit(font_atributo_ronda.render("Victorias:", True, (0, 0, 0)), 
-                      ((55, atributo_ronda_coordenadas[1]+55), (50, atributo_ronda_coordenadas[1])))
+                      ((55, atributo_ronda_coordenadas[1] + 55), (50, atributo_ronda_coordenadas[1])))
         pantalla.blit(font_atributo_ronda.render("Derrotas:", True, (0, 0, 0)), 
-                      ((55, atributo_ronda_coordenadas[1]+75), (50, atributo_ronda_coordenadas[1])))
-        
+                      ((55, atributo_ronda_coordenadas[1] + 75), (50, atributo_ronda_coordenadas[1])))
+
         for i in pygame.event.get():
             if i.type == pygame.USEREVENT: 
                 contador -= 1
@@ -234,10 +263,9 @@ def main(cuenta, cantidad_mano_cartas=6):
             if i.type == pygame.QUIT:
                 status = False
         
-        
         pygame.display.update()
         reloj.tick(60)
         
     pygame.quit()
 
-main("Jugadores/a_cuenta.json")
+main("Jugadores/c_cuenta.json")

@@ -3,9 +3,9 @@ import hashlib
 import random
 import sys
 import os
-#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores/Ventanas'))
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas'))
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Jugadores/Ventanas'))
+#sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Jugadores/Ventanas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/PowerDeck/Cartas'))
 import Ventanas.Ventana_Jugador as ventana_jugador
 import cartas as id
 import tkinter as tk
