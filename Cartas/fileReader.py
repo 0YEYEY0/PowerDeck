@@ -28,6 +28,21 @@ def cardAttribute(attribute, cards):
     info = [card[attribute] for card in sortedCards]
     return info
 
+# Crea una lista con todos los atributo  de las cartas
+def atributos():
+
+    info = list(set().union(*(cartas["atributos"].keys() for cartas in read())))
+    return info
+
+# Crea una lista con todos los valores de un atributo específico de las cartas
+def atributos_valores(atributo, cards):
+    # Ordena alfabéticamente las cartas
+    sortedCards = sorting(cards)
+
+    # Encuentra todos los valores del atributo específico de las cartas
+    info = [card["atributos"][atributo] for card in sortedCards]
+    return info
+
 # Busca la información de una carta específica basada en su nombre
 def cardInfo(name, filename='Cartas/cartas.json'):
     cards = read(filename)
@@ -53,3 +68,6 @@ def getMain(filename='Cartas/cartas.json'):
 # Verifica si el archivo existe
 def exists(filename='Cartas/cartas.json'):
     return os.path.isfile(filename)
+
+#print(cardInfo("Sprint2"))
+#print(atributos_valores("Amabilidad", read()))
