@@ -164,7 +164,6 @@ def main(cuenta, cantidad_mano_cartas=6):
     # Mostrar la carta seleccionada y su atributo
     def display_selected_card(card):
         pantalla.blit(imageAlbum(card['nombre']), (250, 150))
-        print(card['nombre'])
         attribute_value = card['atributos'].get(atributos_carta)
         text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
         pantalla.blit(text, (250, 300))
@@ -217,14 +216,18 @@ def main(cuenta, cantidad_mano_cartas=6):
             for i in range(cantidad_mano_cartas):
                 cardX = cardLocation[i].x
                 cardY = cardLocation[i].y
-
+        
                 Cardbutton = Buttons.Button(cardX, cardY, imageSize[0], imageSize[1], pantalla, True, imageAlbum(fileReader.cardAttribute("nombre", Album)[i]), str(fileReader.cardAttribute("nombre", Album)[i]))
 
+                #print(f"Botón {i}: Coordenadas ({cardX}, {cardY}), Carta: {fileReader.cardAttribute('nombre', Album)[i]}")
+
                 if Cardbutton.hover() and pygame.mouse.get_pressed()[0]:
+                    print(f"Carta seleccionada: {Album[i]['nombre']} (índice {i})")
                     selected_card = Album[i]
                     card_selected = True
                     attribute_value = display_selected_card(selected_card)
                     print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
+                    break
 
         if card_selected:
             pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
