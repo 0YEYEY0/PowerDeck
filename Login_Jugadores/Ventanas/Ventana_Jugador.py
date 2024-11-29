@@ -6,9 +6,10 @@ import os
 #sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck'))
 sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
 sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck'))
-
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Partida'))
 import Album as Album
 import Crear_Deck as Crear_Deck
+import Partida.Partida as Partida
 import Matchmaking
 
 # Abre la ventana del jugador
@@ -32,7 +33,7 @@ def ventana_jugador(cuenta, ventana, usuario):
     boton_crear_mazo = tk.Button(ventana_jugador, text="Crear Mazo", command= lambda:Crear_Deck.DeckManagerApp(usuario))
     boton_crear_mazo.pack(pady=10)
 
-    boton_buscar_partida = tk.Button(ventana_jugador, text="Buscar Partida", command=lambda:Matchmaking.main())
+    boton_buscar_partida = tk.Button(ventana_jugador, text="Buscar Partida", command=lambda:Matchmaking.main(usuario))
     boton_buscar_partida.pack(pady=10)
 
     # Botón para cerrar sesion

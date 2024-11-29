@@ -2,9 +2,14 @@ import tkinter as tk
 import socket
 import threading
 import time
+import sys
+import os
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Partida'))
+import Partida.Partida as Partida
 
-def main():
+def main(usuario):
     # Variable para controlar la búsqueda
+    global buscando
     buscando = False
 
     def buscar_partida():
@@ -14,8 +19,8 @@ def main():
         thread = threading.Thread(target=conectar_al_servidor)
         thread.start()
 
-
     def conectar_al_servidor():
+        
         start_time = time.time()
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -32,17 +37,22 @@ def main():
                     if data:
                         estado_var.set(data)
                         if data == 'En partida':
+                            Partida.partida(usuario)
                             break
+                        if data == "Búsqueda cancelada":
+                            break
+                    print(estado_var)
         except Exception as e:
             estado_var.set("Error de conexión")
             print(f"Error: {e}")
 
-
+        
     def cancelar_busqueda():
         global buscando
         buscando = False
-        estado_var.set("Búsqueda cancelada")
-
+        if buscando == False: 
+            estado_var.set("Búsqueda cancelada")
+            
 
     # Crear la ventana de Tkinter
     root = tk.Toplevel()
@@ -65,3 +75,6 @@ def main():
     estado_label.pack(pady=5)
 
     root.mainloop()
+
+main("Jugadores/a_cuenta.json")
+#main("Jugadores/asdf_cuenta.json")

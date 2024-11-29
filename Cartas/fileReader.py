@@ -28,6 +28,13 @@ def cardAttribute(attribute, cards):
     info = [card[attribute] for card in sortedCards]
     return info
 
+def llaves_cartas(attribute, cards):
+    # Ordena alfabéticamente las cartas
+
+    # Encuentra todos los valores del atributo específico de las cartas
+    info = [card[attribute] for card in cards]
+    return info
+
 # Crea una lista con todos los atributo  de las cartas
 def atributos():
 

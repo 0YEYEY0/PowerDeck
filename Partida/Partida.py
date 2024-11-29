@@ -9,7 +9,7 @@ import Buttons as Buttons
 import json
 import random
 
-def main(cuenta, cantidad_mano_cartas=6):
+def partida(cuenta, cantidad_mano_cartas=5):
     
     pygame.init()
 
@@ -114,18 +114,29 @@ def main(cuenta, cantidad_mano_cartas=6):
 
     with open(card_file, 'r', encoding="utf-8") as file:
         player_data = json.load(file)
-        card_data = player_data['cartas']
+        #card_data = player_data['cartas']
+        
+        mazo = player_data.get('mazos', [])[0].get('cartas', [])  
+        mano = mazo[:cantidad_mano_cartas]
     
     # Obtener la ruta de la imagen desde los datos de la carta
     def get_image_path(name):
+        """
         for card in card_data:
             if card['nombre'] == name:
                 return card['imagen']
         return None
+        """
+        
+        for carta in mano:
+            if carta['nombre'] == name:
+                return carta['imagen']
+        return None
     
     # Función para ordenar y obtener la imagen de una carta
     def imageAlbum(name):
-        if not card_data:
+        #if not card_data:
+        if not mano:
             text = font_cartas.render("Álbum vacío", True, 'white')
             pantalla.blit(text, (250, 300))
             return pygame.Surface(imageSize)
@@ -145,6 +156,7 @@ def main(cuenta, cantidad_mano_cartas=6):
     
     # Crear ubicaciones de cartas en la pantalla
     def createCards(cardAmount):
+        
         x, y = contenedor_mano_jugador_coordenadas[0], contenedor_mano_jugador_coordenadas[1]
         cards.clear()  # Limpia la lista de ubicaciones de cartas
         for i in range(cardAmount):
@@ -157,6 +169,17 @@ def main(cuenta, cantidad_mano_cartas=6):
             cards.append(pygame.Rect(x, y, int(imageSize[0]), int(imageSize[1])))
             x += imageSize[0]
         return cards
+        
+       
+    # Mostrar la carta seleccionada y su atributo
+    def display_selected_card(card):
+        pantalla.blit(imageAlbum(card['nombre']), (250, 150))
+        print(card['nombre'])
+        attribute_value = card['atributos'].get(atributos_carta)
+        text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
+        pantalla.blit(text, (250, 300))
+        return attribute_value
+
 
     Album = []  # Álbum de cartas que se muestra
 
@@ -166,13 +189,16 @@ def main(cuenta, cantidad_mano_cartas=6):
         pantalla.fill(pantalla_color)
         mano_jugadores()
         area_juego()
+        selected_card = None
+        card_selected = False
     
 
         # Cuenta el total de cartas y crea las ubicaciones
-        cardsTotal = len([element for element in card_data if isinstance(element, dict)])
+        #cardsTotal = len([element for element in card_data if isinstance(element, dict)])
         cardLocation = createCards(cantidad_mano_cartas)
 
-        Album = card_data
+        #Album = card_data
+        Album = mano
             
         # Muestra cartas y su información
         for i in range(cantidad_mano_cartas):
@@ -180,10 +206,10 @@ def main(cuenta, cantidad_mano_cartas=6):
             cardY = cardLocation[i].y
             
             # Crea los botones de cartas
-            Cardbutton = Buttons.Button(cardX,cardY,imageSize[0],imageSize[1],pantalla, True, imageAlbum(fileReader.cardAttribute("nombre", Album)[i]), str(fileReader.cardAttribute("nombre", Album)[i]))
+            Cardbutton = Buttons.Button(cardX,cardY,imageSize[0],imageSize[1],pantalla, True, imageAlbum(fileReader.llaves_cartas("nombre", Album)[i]), str(fileReader.llaves_cartas("nombre", Album)[i]))
 
             # Muestra la información de la carta seleccionada
-            if Cardbutton.hover():
+            if Cardbutton.hover() and not pygame.mouse.get_pressed()[0]:
                 pygame.draw.rect(pantalla, "white", [300, 300, 345, 140], 0, 10)
                 pygame.draw.rect(pantalla, "black", [305, 305, 335, 130], 0, 10)
                 atributos = ['Amabilidad', 'Velocidad', 'SabidurÃ\xada', 'Prudencia', 'Resistencia', 'Balance', 'Defensa',
@@ -199,8 +225,22 @@ def main(cuenta, cantidad_mano_cartas=6):
                     if y_offset > 435:
                         x_offset += 85
                         y_offset = 315
+                #print(Album) 
+            #Album2 = reversed(Album)
+            if not card_selected:
+                if Cardbutton.hover() and pygame.mouse.get_pressed()[0]:
+                    print(f"Carta seleccionada: {Album[i]['nombre']} (índice {i})")
+                    selected_card = Album[i]
+                    card_selected = True
+                    attribute_value = display_selected_card(selected_card)
+                    print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
 
-                    
+            if card_selected:
+                pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
+                attribute_value = selected_card['atributos'].get(atributos_carta)
+                text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
+                pantalla.blit(text, (250, 300))   
+                        
                     
 
         # Muestra el temporizador
@@ -240,4 +280,4 @@ def main(cuenta, cantidad_mano_cartas=6):
         
     pygame.quit()
 
-main("Jugadores/a_cuenta.json")
+partida("Jugadores/a_cuenta.json")
