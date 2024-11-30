@@ -3,8 +3,8 @@ import random
 import hashlib
 import sys
 import os
-#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Administrador/Ventanas_Administrador'))
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador/Ventanas_Administrador'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Administrador/Ventanas_Administrador'))
+#sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador/Ventanas_Administrador'))
 
 import Ventanas_Administrador.ventana_administrador as ventana_administrador
 import Ventanas_Administrador.ventana_administrador_configuracion as ventana_administrador_configuracion

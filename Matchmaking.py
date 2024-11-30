@@ -76,5 +76,5 @@ def main(usuario):
 
     root.mainloop()
 
-main("Jugadores/a_cuenta.json")
+#main("Jugadores/a_cuenta.json")
 #main("Jugadores/asdf_cuenta.json")

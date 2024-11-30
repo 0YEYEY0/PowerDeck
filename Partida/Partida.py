@@ -124,6 +124,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
         #card_data = player_data['cartas']
         
         mazo = player_data.get('mazos', [])[0].get('cartas', [])  
+        #print(mazo)
         mano = mazo[:cantidad_mano_cartas]
     
     # Obtener la ruta de la imagen desde los datos de la carta
@@ -199,87 +200,76 @@ def partida(cuenta, cantidad_mano_cartas=5):
         Album = mano
             
         # Muestra cartas y su información
-        for i in range(cantidad_mano_cartas):
+        for i in range(len(cardLocation)):
             cardX = cardLocation[i].x
             cardY = cardLocation[i].y
-            
-            # Crea los botones de cartas
-            Cardbutton = Buttons.Button(cardX,cardY,imageSize[0],imageSize[1],pantalla, True, imageAlbum(fileReader.llaves_cartas("nombre", Album)[i]), str(fileReader.llaves_cartas("nombre", Album)[i]))
 
-            # Muestra la información de la carta seleccionada
-            if Cardbutton.hover() and not pygame.mouse.get_pressed()[0]:
-                pygame.draw.rect(pantalla, "white", [300, 300, 345, 140], 0, 10)
-                pygame.draw.rect(pantalla, "black", [305, 305, 335, 130], 0, 10)
-                atributos = ['Amabilidad', 'Velocidad', 'SabidurÃ\xada', 'Prudencia', 'Resistencia', 'Balance', 'Defensa',
-                'Liderazgo', 'Confianza', 'Fuerza', 'Inteligencia', 'Altura', 'Flexibilidad', 'Lealtad', 'Explosividad', 
-                'CoordinaciÃ³n', 'ValentÃ\xada', 'Poder', 'Disciplina', 'PercepciÃ³n', 'Agilidad', 'Habilidad', 'Carisma', 
-                'Salto', 'Magia', 'Suerte']
-                y_offset = 315
-                x_offset = 315
-                for atributo in atributos:
-                    text = font_cartas_atributos.render(f"{atributo.capitalize()}: {fileReader.atributos_valores(atributo, Album)[i]}", True, 'white')
-                    pantalla.blit(text, (x_offset, y_offset))
-                    y_offset += 20
-                    if y_offset > 435:
-                        x_offset += 85
-                        y_offset = 315
+            # Verifica si aún quedan cartas en el mazo para esta posición
+            if i < len(Album):
+                # Crea los botones de cartas
+                Cardbutton = Buttons.Button(
+                    cardX,
+                    cardY,
+                    imageSize[0],
+                    imageSize[1],
+                    pantalla,
+                    True,
+                    imageAlbum(Album[i]['nombre']),
+                    str(Album[i]['nombre'])
+                )
 
-            if not card_selected:
-                if Cardbutton.clicked():
-                    print(f"Carta seleccionada: {Album[i]['nombre']} (índice {i})")
-                    selected_card = Album[i]
+                # Muestra la información de la carta seleccionada
+                if Cardbutton.hover() and not pygame.mouse.get_pressed()[0]:
+                    pygame.draw.rect(pantalla, "white", [300, 300, 345, 140], 0, 10)
+                    pygame.draw.rect(pantalla, "black", [305, 305, 335, 130], 0, 10)
+                    atributos = ['Amabilidad', 'Velocidad', 'SabidurÃ\xada', 'Prudencia', 'Resistencia', 'Balance', 'Defensa',
+                                'Liderazgo', 'Confianza', 'Fuerza', 'Inteligencia', 'Altura', 'Flexibilidad', 'Lealtad', 'Explosividad',
+                                'CoordinaciÃ³n', 'ValentÃ\xada', 'Poder', 'Disciplina', 'PercepciÃ³n', 'Agilidad', 'Habilidad', 'Carisma',
+                                'Salto', 'Magia', 'Suerte']
+                    y_offset = 315
+                    x_offset = 315
+                    for atributo in atributos:
+                        text = font_cartas_atributos.render(f"{atributo.capitalize()}: {fileReader.atributos_valores(atributo, Album)[i]}", True, 'white')
+                        pantalla.blit(text, (x_offset, y_offset))
+                        y_offset += 20
+                        if y_offset > 435:
+                            x_offset += 85
+                            y_offset = 315
+
+                if not card_selected:
+                    if Cardbutton.hover() and pygame.mouse.get_pressed()[0]:
+                        print(f"Carta seleccionada: {Album[i]['nombre']} (índice {i})")
+                        selected_card = Album.pop(i)  # Remover la carta seleccionada del mazo
+                        card_selected = True
+                        attribute_value = display_selected_card(selected_card)
+                        print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
+                        atributos_carta = random.choice(fileReader.atributos())  # Cambiar atributo
+                        contador = 10  # Reiniciar el contador de tiempo
+                        # Reemplaza la carta eliminada con otra del mazo, si queda alguna
+                        if i < len(Album):
+                            new_card = mazo.pop()
+                            Album.insert(i, new_card)  # Toma la última carta y la coloca en la posición actual
+                            Cardbutton.image = imageAlbum(new_card['nombre'])
+
+                if card_selected:
+                    pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
+                    attribute_value = selected_card['atributos'].get(atributos_carta)
+                    text = font_cartas.render(
+                        f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
+                    pantalla.blit(text, (250, 300))
+
+                if contador <= 0 and not card_selected:
+                    selected_card = Album.pop(random.randint(0, len(Album) - 1))  # Carta seleccionada al azar
                     card_selected = True
                     attribute_value = display_selected_card(selected_card)
-                    print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
-                    # Pasar de ronda y cambiar el atributo
-
-                    #atributos_carta = random.choice(fileReader.atributos())
-                    #contador = 10  # Reiniciar el contador de tiempo
-                    
-
-            if card_selected:
-                pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
-                attribute_value = selected_card['atributos'].get(atributos_carta)
-                text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
-                pantalla.blit(text, (250, 300)) 
+                    print(f"Tiempo agotado. Carta seleccionada al azar: {selected_card['nombre']}")
+                    atributos_carta = random.choice(fileReader.atributos())  # Cambiar atributo
+                    contador = 10  # Reiniciar el contador de tiempo
+                    if i < len(Album):
+                        new_card = mazo.pop()
+                        Album.insert(i, new_card)  # Toma la última carta y la coloca en la posición actual
+                        Cardbutton.image = imageAlbum(new_card['nombre'])
                 
-                if attribute_value > 2:
-                    print("gano")
-                    decision_ronda = "gano"
-                if attribute_value < 2:
-                    print("perdio")
-                    decision_ronda = "perdio"
-                if attribute_value == 2:
-                    print("empate")
-                    decision_ronda = "empate"
-                
-                if decision_ronda == "gano":
-                    victorias +=1
-                if decision_ronda == "perdio":
-                    derrotas +=1
-                if decision_ronda == "empate":
-                    empate +=1
-
-                atributos_carta = random.choice(fileReader.atributos())
-                contador = 10  # Reiniciar el contador de tiempo
-                
-
-            if contador <= 0 and not card_selected:
-                selected_card = random.choice(Album)
-                card_selected = True
-                attribute_value = display_selected_card(selected_card)
-                print(f"Tiempo agotado. Carta seleccionada al azar: {selected_card['nombre']}")
-                # Pasar de ronda y cambiar el atributo
-                atributos_carta = random.choice(fileReader.atributos())
-                contador = 10  # Reiniciar el contador de tiempo
-                
-
-
-
-
-                    
-
-        # Muestra el temporizador
         pygame.draw.rect(pantalla, "white", [(temporizador_coordenadas[0] - 5, temporizador_coordenadas[1] - 5), (80, 20)], 0, 0)
         pygame.draw.rect(pantalla, "black", [(temporizador_coordenadas[0] - 5, temporizador_coordenadas[1] - 5), (80, 20)], 5, 0)
         pantalla.blit(font_temporizador.render("Tiempo:" + texto_temporizador, True, (0, 0, 0)), temporizador_coordenadas)
@@ -317,4 +307,4 @@ def partida(cuenta, cantidad_mano_cartas=5):
         
     pygame.quit()
 
-partida("Jugadores/a_cuenta.json")
+partida("Jugadores/12345_cuenta.json")

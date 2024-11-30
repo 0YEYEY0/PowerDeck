@@ -7,7 +7,7 @@ class DeckManagerApp:
     def __init__(self, user_file):
         self.user_file = user_file
         self.load_user_data()
-        self.deck_size = 5  # Tamaño máximo del mazo
+        self.deck_size = 10  # Tamaño máximo del mazo
         self.max_decks = 15  # Número máximo de mazos por usuario
 
         # Crear ventana principal
@@ -86,12 +86,13 @@ class DeckManagerApp:
         if hasattr(self, "temp_deck") and self.temp_deck:
             messagebox.showerror("Error", "Ya tienes un mazo en progreso. Completa el mazo antes de crear otro.")
             return
-
+        deck_size = 10  # Tamaño máximo del mazo
         # Crear el mazo temporal
         self.temp_deck = {"nombre": deck_name, "cartas": []}
-        messagebox.showinfo("Información", f"Mazo '{deck_name}' creado. Agrega al menos 5 cartas para guardarlo.")
+        messagebox.showinfo("Información", f"Mazo '{deck_name}' creado. Agrega al menos '{deck_size}' cartas para guardarlo.")
 
     def add_card_to_deck(self):
+        deck_size = 10  # Tamaño máximo del mazo
         # Agregar una carta seleccionada al mazo temporal o activo
         selected_card_index = self.card_listbox.curselection()
         if not selected_card_index:
@@ -112,7 +113,7 @@ class DeckManagerApp:
 
         # Verificar restricciones de cantidad por tipo
         tipo_carta = card["tipo_carta"]
-        restricciones_tipo = {"Ultra Rara": 0.1, "Muy-Rara": 0.15, "Rara": 0.2, "Normal": 0.6, "Basica": 1.0}
+        restricciones_tipo = {"Ultra-Rara": 0.1, "Muy Rara": 0.15, "Rara": 0.2, "Normal": 0.6, "Basica": 1.0}
         max_tipo = int(self.deck_size * restricciones_tipo.get(tipo_carta, 0))
         
         current_count = sum(1 for c in deck["cartas"] if c["tipo_carta"] == tipo_carta)
@@ -129,7 +130,7 @@ class DeckManagerApp:
         messagebox.showinfo("Éxito", f"Carta '{card['nombre']}' agregada al mazo '{deck['nombre']}'.")
 
         # Verificar si el mazo tiene al menos 5 cartas para guardarlo
-        if len(deck["cartas"]) >= 5:
+        if len(deck["cartas"]) >= deck_size:
             self.decks.append(deck)
             self.temp_deck = None  # Limpiar el mazo temporal
             self.save_user_data()

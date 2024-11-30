@@ -9,7 +9,7 @@ FILE_PATH = 'Cartas/cartas.json'
 
 # Valores predefinidos para las razas oficiales y tipos de carta
 RAZAS_OFICIALES = ['Humano', 'Elfo', 'Orco', 'Dragón', 'ángel', 'Demonio']
-TIPOS_CARTA = ['Ultra-Rara', 'Muy-Rara', 'Rara', 'Normal', 'Basica']
+TIPOS_CARTA = ['Ultra-Rara', 'Muy Rara', 'Rara', 'Normal', 'Basica']
 
 
 # Función para validar los atributos de la carta
