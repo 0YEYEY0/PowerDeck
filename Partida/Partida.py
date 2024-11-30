@@ -3,16 +3,18 @@ import pygame.event
 import pygame.transform
 import sys 
 import os
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Jugadores'))
-#sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
-
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Jugadores'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Jugadores'))
+import tkinter as tk
+from tkinter import messagebox
 import fileReader as fileReader
 import Buttons as Buttons
 import json
 import random
 
-def partida(cuenta, cantidad_mano_cartas=5):
+def partida(cuenta, cantidad_mano_cartas=5, ronda = 5):
     
     pygame.init()
 
@@ -199,6 +201,12 @@ def partida(cuenta, cantidad_mano_cartas=5):
         text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
         pantalla.blit(text, (400, 300))
         return attribute_value
+    
+    def fin_partida():
+        if victorias//4 >= ((ronda-1)//2)+1:
+            tk.messagebox.showinfo("Ganador",  "Ganaste")
+        if derrotas//4 >= ((ronda-1)//2)+1:
+            tk.messagebox.showinfo("Perdedor",  "Perdiste")
 
     Album = []  # Álbum de cartas que se muestra
 
@@ -299,6 +307,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
                         victorias +=1
                     if decision_ronda == "perdio":
                         derrotas +=1
+                    fin_partida()
 
                 if contador <= 0 and not card_selected:
                     selected_card = Album.pop(random.randint(0, len(Album) - 1))  # Carta seleccionada al azar
