@@ -132,7 +132,7 @@ def crear_cuenta_jugador(nombre_usuario, contraseña, correo, nombre_persona, pa
     }
 
     cartas = cargar_cartas("Cartas/cartas.json")
-    cuenta["cartas"] = asignar_cartas(cartas, 7)
+    cuenta["cartas"] = asignar_cartas(cartas, 15)
     return cuenta
 
 def guardar_cuenta(cuenta, ruta_archivo):
