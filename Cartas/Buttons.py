@@ -6,7 +6,7 @@ import pygame.rect
 # Inialize pygame font
 pygame.font.init()
 
- 
+
  # Button class
 class Button():
     # Button methods
@@ -28,6 +28,8 @@ class Button():
         self.img = img
         self.rect = self.img.get_rect(center=(self.x, self.y))
         self.draw()
+        self.click = False
+        self.action = False
 
 
     # Draw buttons method
@@ -56,6 +58,8 @@ class Button():
             self.screen.blit(button_text2, text_rect2)
 
         
+
+        
     # Check if button´s clicked method
     def pressed (self):
         pointer = pygame.mouse.get_pos()
@@ -67,7 +71,25 @@ class Button():
             return True
         else:
             return False   
+    
+    # Check if button´s clicked method
+    def clicked (self):
+        pointer = pygame.mouse.get_pos()
+        button_rect = pygame.rect.Rect(self.rect)
          
+        # Button conditions (Mouse clicked)
+        if button_rect.collidepoint(pointer):
+            if pygame.mouse.get_pressed()[0] == 1:
+                self.click = True
+                #return True
+                #print ("Hola")
+                self.action = True
+            elif pygame.mouse.get_pressed()[0] == 0 and self.click == True:
+                self.click=False  
+                #return True
+                self.action = True
+        return self.action
+     
     # Check if mouse is near the button method 
     def hover(self):
         pointer = pygame.mouse.get_pos()

@@ -3,7 +3,8 @@ import pygame.event
 import pygame.transform
 import sys 
 import os
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
 import fileReader as fileReader
 import Buttons as Buttons
 import json
@@ -61,7 +62,11 @@ def partida(cuenta, cantidad_mano_cartas=5):
                                 (pantalla_y/2))
     font_atributo_ronda = pygame.font.SysFont(None, 18)
     atributos_carta = random.choice(fileReader.atributos())
-    print(atributos_carta)
+    decision_ronda = None
+    victorias = 0
+    derrotas = 0 
+    empate = 0
+    
 
     # Nombre de la ventana de pygame
     pygame.display.set_caption('PowerDeck Partida')
@@ -220,21 +225,44 @@ def partida(cuenta, cantidad_mano_cartas=5):
                         y_offset = 315
 
             if not card_selected:
-                if Cardbutton.hover() and pygame.mouse.get_pressed()[0]:
+                if Cardbutton.clicked():
                     print(f"Carta seleccionada: {Album[i]['nombre']} (índice {i})")
                     selected_card = Album[i]
                     card_selected = True
                     attribute_value = display_selected_card(selected_card)
                     print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
                     # Pasar de ronda y cambiar el atributo
-                    atributos_carta = random.choice(fileReader.atributos())
-                    contador = 10  # Reiniciar el contador de tiempo
+
+                    #atributos_carta = random.choice(fileReader.atributos())
+                    #contador = 10  # Reiniciar el contador de tiempo
+                    
 
             if card_selected:
                 pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
                 attribute_value = selected_card['atributos'].get(atributos_carta)
                 text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
-                pantalla.blit(text, (250, 300))   
+                pantalla.blit(text, (250, 300)) 
+                
+                if attribute_value > 2:
+                    print("gano")
+                    decision_ronda = "gano"
+                if attribute_value < 2:
+                    print("perdio")
+                    decision_ronda = "perdio"
+                if attribute_value == 2:
+                    print("empate")
+                    decision_ronda = "empate"
+                
+                if decision_ronda == "gano":
+                    victorias +=1
+                if decision_ronda == "perdio":
+                    derrotas +=1
+                if decision_ronda == "empate":
+                    empate +=1
+
+                atributos_carta = random.choice(fileReader.atributos())
+                contador = 10  # Reiniciar el contador de tiempo
+                
 
             if contador <= 0 and not card_selected:
                 selected_card = random.choice(Album)
@@ -244,7 +272,11 @@ def partida(cuenta, cantidad_mano_cartas=5):
                 # Pasar de ronda y cambiar el atributo
                 atributos_carta = random.choice(fileReader.atributos())
                 contador = 10  # Reiniciar el contador de tiempo
-                        
+                
+
+
+
+
                     
 
         # Muestra el temporizador
@@ -266,15 +298,16 @@ def partida(cuenta, cantidad_mano_cartas=5):
         # Muestra victorias/derrotas de rondas
         pygame.draw.rect(pantalla, "white", [(50, atributo_ronda_coordenadas[1] + 50), (145, 40)], 0, 0)
         pygame.draw.rect(pantalla, "black", [(50, atributo_ronda_coordenadas[1] + 50), (145, 40)], 5, 0)
-        pantalla.blit(font_atributo_ronda.render("Victorias:", True, (0, 0, 0)), 
+        pantalla.blit(font_atributo_ronda.render("Victorias:" + str(victorias//4), True, (0, 0, 0)), 
                       ((55, atributo_ronda_coordenadas[1] + 55), (50, atributo_ronda_coordenadas[1])))
-        pantalla.blit(font_atributo_ronda.render("Derrotas:", True, (0, 0, 0)), 
+        pantalla.blit(font_atributo_ronda.render("Derrotas:" + str(derrotas//4), True, (0, 0, 0)), 
                       ((55, atributo_ronda_coordenadas[1] + 75), (50, atributo_ronda_coordenadas[1])))
 
         for i in pygame.event.get():
             if i.type == pygame.USEREVENT: 
                 contador -= 1
                 texto_temporizador = str(contador).rjust(3) if contador > 0 else 'Cambio!'
+
             if i.type == pygame.QUIT:
                 status = False
         
