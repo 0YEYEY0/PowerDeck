@@ -3,8 +3,10 @@ import pygame.event
 import pygame.transform
 import sys 
 import os
-#sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Jugadores'))
+#sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+
 import fileReader as fileReader
 import Buttons as Buttons
 import json
@@ -127,6 +129,15 @@ def partida(cuenta, cantidad_mano_cartas=5):
         #print(mazo)
         mano = mazo[:cantidad_mano_cartas]
     
+    # Cargar datos de las cartas del bot
+    with open('Jugadores/mazo_bot.json', 'r', encoding="utf-8") as file:
+        bot_data = json.load(file)
+        #card_data = player_data['cartas']
+        
+        mazo_bot = bot_data.get('mazos', [])[0].get('cartas', [])  
+        #print(mazo)
+        mano_bot = mazo_bot[:cantidad_mano_cartas]
+
     # Obtener la ruta de la imagen desde los datos de la carta
     def get_image_path(name):   
         for carta in mano:
@@ -181,6 +192,13 @@ def partida(cuenta, cantidad_mano_cartas=5):
         pantalla.blit(text, (250, 300))
         return attribute_value
 
+    def display_selected_card_bot(card):
+        pantalla.blit(imageAlbum(card['nombre']), (400, 150))
+        #print(card['nombre'])
+        attribute_value = card['atributos'].get(atributos_carta)
+        text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
+        pantalla.blit(text, (400, 300))
+        return attribute_value
 
     Album = []  # Álbum de cartas que se muestra
 
@@ -250,6 +268,8 @@ def partida(cuenta, cantidad_mano_cartas=5):
                             new_card = mazo.pop()
                             Album.insert(i, new_card)  # Toma la última carta y la coloca en la posición actual
                             Cardbutton.image = imageAlbum(new_card['nombre'])
+                        else:
+                            print("Mazo vacío")
 
                 if card_selected:
                     pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
@@ -257,21 +277,27 @@ def partida(cuenta, cantidad_mano_cartas=5):
                     text = font_cartas.render(
                         f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
                     pantalla.blit(text, (250, 300))
+                    
+                    if len(mazo_bot) > 0:
+                        selected_card_bot = mano_bot.pop(random.randint(0, len(mano_bot) - 1))
+                        attribute_value_bot = display_selected_card_bot(selected_card_bot)
+                        new_bot_card = mazo_bot.pop()
+                        mano_bot.insert(i, new_bot_card)
+                    else:
+                        print("Mano del bot vacía")
 
-                    if attribute_value > 2:
+                    if attribute_value > attribute_value_bot:
                         decision_ronda = "gano"
                         rondas +=1
-                    if attribute_value < 2:
+                    if attribute_value < attribute_value_bot:
                         decision_ronda = "perdio"
                         rondas += 1
-                    if attribute_value == 2:
+                    if attribute_value == attribute_value_bot:
                         decision_ronda = "empate"
                     if decision_ronda == "gano":
                         victorias +=1
                     if decision_ronda == "perdio":
                         derrotas +=1
-
-                        
 
                 if contador <= 0 and not card_selected:
                     selected_card = Album.pop(random.randint(0, len(Album) - 1))  # Carta seleccionada al azar
@@ -322,4 +348,4 @@ def partida(cuenta, cantidad_mano_cartas=5):
         
     pygame.quit()
 
-#partida("Jugadores/12345_cuenta.json")
+partida("Jugadores/12345_cuenta.json")
