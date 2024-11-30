@@ -1,10 +1,10 @@
 import tkinter as tk
 import sys
 import os
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Cartas'))
-sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Administrador'))
-#sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
-#sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador'))
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Cartas'))
+#sys.path.append(os.path.abspath('C:/Users/menei/Documents/Github/PowerDeck/Login_Administrador'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Login_Administrador'))
 import Album as Album
 import interfaz as interfaz
 import Crear_Admin

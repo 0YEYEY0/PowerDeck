@@ -66,7 +66,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
     victorias = 0
     derrotas = 0 
     empate = 0
-    
+    rondas = 0
 
     # Nombre de la ventana de pygame
     pygame.display.set_caption('PowerDeck Partida')
@@ -258,6 +258,21 @@ def partida(cuenta, cantidad_mano_cartas=5):
                         f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
                     pantalla.blit(text, (250, 300))
 
+                    if attribute_value > 2:
+                        decision_ronda = "gano"
+                        rondas +=1
+                    if attribute_value < 2:
+                        decision_ronda = "perdio"
+                        rondas += 1
+                    if attribute_value == 2:
+                        decision_ronda = "empate"
+                    if decision_ronda == "gano":
+                        victorias +=1
+                    if decision_ronda == "perdio":
+                        derrotas +=1
+
+                        
+
                 if contador <= 0 and not card_selected:
                     selected_card = Album.pop(random.randint(0, len(Album) - 1))  # Carta seleccionada al azar
                     card_selected = True
@@ -282,7 +297,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
         # Muestra el # rondas
         pygame.draw.rect(pantalla, "white", [(50, atributo_ronda_coordenadas[1]), (145, 20)], 0, 0)
         pygame.draw.rect(pantalla, "black", [(50, atributo_ronda_coordenadas[1]), (145, 20)], 5, 0)
-        pantalla.blit(font_atributo_ronda.render("# de rondas:", True, (0, 0, 0)), 
+        pantalla.blit(font_atributo_ronda.render("# de rondas:" + str(rondas//4), True, (0, 0, 0)), 
                       ((55, atributo_ronda_coordenadas[1] + 5), (50, atributo_ronda_coordenadas[1])))
         
         # Muestra victorias/derrotas de rondas
@@ -307,4 +322,4 @@ def partida(cuenta, cantidad_mano_cartas=5):
         
     pygame.quit()
 
-partida("Jugadores/12345_cuenta.json")
+#partida("Jugadores/12345_cuenta.json")
