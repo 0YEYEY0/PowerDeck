@@ -265,11 +265,12 @@ def partida(cuenta, cantidad_mano_cartas=5):
                         contador = 10  # Reiniciar el contador de tiempo
                         # Reemplaza la carta eliminada con otra del mazo, si queda alguna
                         if i < len(Album):
-                            new_card = mazo.pop()
-                            Album.insert(i, new_card)  # Toma la última carta y la coloca en la posición actual
-                            Cardbutton.image = imageAlbum(new_card['nombre'])
-                        else:
-                            print("Mazo vacío")
+                            if len(mazo) > 0:
+                                new_card = mazo.pop()
+                                Album.insert(i, new_card)  # Toma la última carta y la coloca en la posición actual
+                                Cardbutton.image = imageAlbum(new_card['nombre'])
+                            else:
+                                print("Mazo vacío")
 
                 if card_selected:
                     pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
