@@ -3,51 +3,83 @@ import socket
 import threading
 import time
 
-# Variable para controlar la búsqueda
+# Variables globales
 buscando = False
-
+conexion = None  # Manejar conexión activa con el servidor
 
 def buscar_partida():
     global buscando
+    if buscando:  # Evitar múltiples búsquedas simultáneas
+        return
+
     buscando = True
-    estado_var.set("Buscando partida")
-    thread = threading.Thread(target=conectar_al_servidor)
+    estado_var.set("Buscando partida...")
+    thread = threading.Thread(target=conectar_al_servidor, daemon=True)
     thread.start()
 
-
 def conectar_al_servidor():
+    global buscando, conexion
     start_time = time.time()
+
     try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect(('127.0.0.1', 12345))  # Conectar al servidor
-            s.sendall(b'buscar_partida')
+        conexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        conexion.connect(('127.0.0.1', 12345))  # Conectar al servidor
+        conexion.sendall(b'buscar_partida')
 
-            while buscando:
-                # Verificar si ha pasado el tiempo límite de 60 segundos
-                if time.time() - start_time > 5:
-                    estado_var.set("Tiempo excedido")
-                    return
+        while buscando:
+            # Verificar si ha pasado el tiempo límite de 60 segundos
+            if time.time() - start_time > 60:
+                estado_var.set("Tiempo excedido")
+                buscando = False
+                return
 
-                data = s.recv(1024).decode()
-                if data:
-                    estado_var.set(data)
-                    if data == 'En partida':
-                        break
+            conexion.settimeout(1)  # Timeout corto para no bloquear indefinidamente
+            try:
+                data = conexion.recv(1024).decode()
+                if data == 'En partida':
+                    estado_var.set("¡Partida encontrada!")
+                    buscando = False
+                    break
+                elif data == 'Búsqueda cancelada':
+                    estado_var.set("Búsqueda cancelada")
+                    buscando = False
+                    break
+            except socket.timeout:
+                continue
+
     except Exception as e:
-        estado_var.set("Error de conexión")
-        print(f"Error: {e}")
-
+        if buscando:
+            estado_var.set("Error de conexión")
+            print(f"Error: {e}")
+    finally:
+        if conexion:
+            conexion.close()
+            conexion = None
+        buscando = False
 
 def cancelar_busqueda():
-    global buscando
-    buscando = False
-    estado_var.set("Búsqueda cancelada")
+    global buscando, conexion
+    if not buscando:
+        return
 
+    buscando = False
+    estado_var.set("Cancelando búsqueda...")
+
+    try:
+        if conexion:
+            conexion.sendall(b'cancelar_busqueda')  # Informar al servidor
+    except Exception as e:
+        print(f"Error al cancelar: {e}")
+    finally:
+        if conexion:
+            conexion.close()
+            conexion = None
+        estado_var.set("Búsqueda cancelada")
 
 # Crear la ventana de Tkinter
 root = tk.Tk()
 root.title("Matchmaking")
-root.geometry("400x300")  # Aumentar el tamaño de la ventana
+root.geometry("400x300")
 
 estado_var = tk.StringVar()
 estado_var.set("Desconectado")

@@ -1,69 +1,83 @@
 import socket
 import threading
-import time
+import uuid
 
 # Lista para manejar jugadores en espera
-waiting_players = []
+jugadores_espera = {}
 
 # Bloqueo para manejo seguro de listas entre hilos
 lock = threading.Lock()
 
-# Configuración del servidor
+# Configuracion del servidor
 HOST = '127.0.0.1'  # Localhost
 PORT = 12345  # Puerto de escucha
 
-# Función que maneja cada conexión de cliente
+
+# Funcion que maneja cada conexion de cliente
 def manejo_cliente(conn, addr):
-    print(f"Conectado por {addr}")
-    tiempo_inicio = time.time()  # Registrar el tiempo de inicio de la conexión
+    cliente_id = str(uuid.uuid4())
+    print(f"Conectado por {addr} con ID {cliente_id}")
+
+    jugadores_espera[cliente_id] = {
+        'conn': conn,
+        'addr': addr,
+        'en_busqueda': False
+    }
 
     try:
-        conn.sendall(b'Desconectado')  # Estado inicial
-        data = conn.recv(1024).decode()
+        while True:
+            data = conn.recv(1024).decode()
 
-        if data == 'buscar_partida':
-            conn.sendall(b'Buscando partida')
-            with lock:
-                waiting_players.append((conn, addr))
-                print(f"Jugador agregado. Total en espera: {len(waiting_players)}")
-
-            # Esperar a que haya otro jugador o que se agote el tiempo de espera
-            while True:
+            if data == 'buscar_partida':
                 with lock:
-                    if len(waiting_players) >= 2:
-                        # Emparejar los dos primeros jugadores de la lista
-                        player1, addr1 = waiting_players.pop(0)
-                        player2, addr2 = waiting_players.pop(0)
+                    jugadores_espera[cliente_id]['en_busqueda'] = True
+                    print(f"Jugador {cliente_id} agregado a la busqueda. Total en espera: {len(jugadores_espera)}")
+                conn.sendall(b'Buscando partida')
 
-                        # Notificar a ambos jugadores que han encontrado partida
-                        try:
-                            player1.sendall(b'En partida')
-                            player2.sendall(b'En partida')
-                            print(f"Partida encontrada entre {addr1} y {addr2}")
-                        except Exception as e:
-                            print(f"Error al enviar datos a los jugadores: {e}")
-                            player1.close()
-                            player2.close()
-                        return
+                # Intentar emparejar si hay suficientes jugadores
+                emparejar_jugadores()
 
-                # Verificar si se ha excedido el tiempo de espera de 60 segundos
-                if time.time() - tiempo_inicio > 60:
-                    with lock:
-                        if (conn, addr) in waiting_players:
-                            waiting_players.remove((conn, addr))
-                    conn.sendall(b'Tiempo excedido. No se encontro partida.')
-                    conn.close()
-                    print(f"Tiempo de espera agotado para la conexión con {addr}")
-                    return
+            elif data == 'cancelar_busqueda':
+                with lock:
+                    jugadores_espera.clear()  # Vaciar la lista de espera
+                    print("Lista de espera vaciada por cancelacion.")
+                conn.sendall(b'Busqueda cancelada')
 
-                time.sleep(1)  # Evitar un bucle muy intensivo
+            elif data == 'volver_a_buscar':
+                with lock:
+                    jugadores_espera[cliente_id]['en_busqueda'] = True
+                    print(f"Jugador {cliente_id} ha vuelto a buscar partida.")
+                conn.sendall(b'Buscando partida')
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error con {addr}: {e}")
     finally:
+        with lock:
+            if cliente_id in jugadores_espera:
+                del jugadores_espera[cliente_id]
+        print(f"Conexion cerrada con {addr}")
         conn.close()
 
-# Inicialización del servidor
+
+# Funcion para emparejar jugadores
+def emparejar_jugadores():
+    with lock:
+        jugadores_disponibles = [id for id, datos in jugadores_espera.items() if datos['en_busqueda']]
+        if len(jugadores_disponibles) >= 2:
+            jugador1 = jugadores_disponibles.pop(0)
+            jugador2 = jugadores_disponibles.pop(0)
+
+            # Enviar mensaje a los jugadores emparejados
+            try:
+                jugadores_espera[jugador1]['conn'].sendall(b'En partida')  # Cambiado
+                jugadores_espera[jugador2]['conn'].sendall(b'En partida')  # Cambiado
+                print(
+                    f"Partida encontrada entre {jugadores_espera[jugador1]['addr']} y {jugadores_espera[jugador2]['addr']}")
+            except Exception as e:
+                print(f"Error al enviar datos a los jugadores: {e}")
+
+
+# Inicializacion del servidor
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((HOST, PORT))
 server.listen()
@@ -78,3 +92,4 @@ except KeyboardInterrupt:
     print("Servidor detenido manualmente")
 finally:
     server.close()
+
