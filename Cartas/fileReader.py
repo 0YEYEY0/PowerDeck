@@ -44,10 +44,10 @@ def atributos():
 # Crea una lista con todos los valores de un atributo específico de las cartas
 def atributos_valores(atributo, cards):
     # Ordena alfabéticamente las cartas
-    sortedCards = sorting(cards)
+    #sortedCards = sorting(cards)
 
     # Encuentra todos los valores del atributo específico de las cartas
-    info = [card["atributos"][atributo] for card in sortedCards]
+    info = [card["atributos"][atributo] for card in cards]
     return info
 
 # Busca la información de una carta específica basada en su nombre

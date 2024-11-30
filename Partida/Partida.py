@@ -3,7 +3,7 @@ import pygame.event
 import pygame.transform
 import sys 
 import os
-sys.path.append(os.path.abspath('C:/Users/josec/Downloads/Projects/PowerDeck/PowerDeck/Cartas'))
+sys.path.append(os.path.abspath('C:/Users/menei/Documents/GitHub/PowerDeck/Cartas'))
 import fileReader as fileReader
 import Buttons as Buttons
 import json
@@ -52,7 +52,8 @@ def partida(cuenta, cantidad_mano_cartas=5):
     # información de temporizador 
     reloj = pygame.time.Clock()
     contador = 10
-    texto_temporizador = "10".rjust(3)
+    tiempo = 10
+    texto_temporizador = str(tiempo).rjust(3)
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
     # configuración visual del atributo de la ronda
@@ -121,14 +122,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
         mano = mazo[:cantidad_mano_cartas]
     
     # Obtener la ruta de la imagen desde los datos de la carta
-    def get_image_path(name):
-        """
-        for card in card_data:
-            if card['nombre'] == name:
-                return card['imagen']
-        return None
-        """
-        
+    def get_image_path(name):   
         for carta in mano:
             if carta['nombre'] == name:
                 return carta['imagen']
@@ -193,9 +187,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
         selected_card = None
         card_selected = False
     
-
         # Cuenta el total de cartas y crea las ubicaciones
-        #cardsTotal = len([element for element in card_data if isinstance(element, dict)])
         cardLocation = createCards(cantidad_mano_cartas)
 
         #Album = card_data
@@ -226,8 +218,7 @@ def partida(cuenta, cantidad_mano_cartas=5):
                     if y_offset > 435:
                         x_offset += 85
                         y_offset = 315
-                #print(Album) 
-            #Album2 = reversed(Album)
+
             if not card_selected:
                 if Cardbutton.hover() and pygame.mouse.get_pressed()[0]:
                     print(f"Carta seleccionada: {Album[i]['nombre']} (índice {i})")
@@ -235,12 +226,24 @@ def partida(cuenta, cantidad_mano_cartas=5):
                     card_selected = True
                     attribute_value = display_selected_card(selected_card)
                     print(f"Atributo {atributos_carta} de la carta seleccionada: {attribute_value}")
+                    # Pasar de ronda y cambiar el atributo
+                    atributos_carta = random.choice(fileReader.atributos())
+                    contador = 10  # Reiniciar el contador de tiempo
 
             if card_selected:
                 pantalla.blit(imageAlbum(selected_card['nombre']), (250, 150))
                 attribute_value = selected_card['atributos'].get(atributos_carta)
                 text = font_cartas.render(f"{atributos_carta.capitalize()}: {attribute_value}", True, 'black')
                 pantalla.blit(text, (250, 300))   
+
+            if contador <= 0 and not card_selected:
+                selected_card = random.choice(Album)
+                card_selected = True
+                attribute_value = display_selected_card(selected_card)
+                print(f"Tiempo agotado. Carta seleccionada al azar: {selected_card['nombre']}")
+                # Pasar de ronda y cambiar el atributo
+                atributos_carta = random.choice(fileReader.atributos())
+                contador = 10  # Reiniciar el contador de tiempo
                         
                     
 
